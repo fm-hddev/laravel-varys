@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import type { DataSourceAdapter, StreamTarget } from '../types/adapter.js';
+import type { ProjectContext } from '../types/context.js';
 import type {
   Broadcast,
   FailedJob,
@@ -10,8 +12,6 @@ import type {
   ProbeResult,
   QueueStats,
 } from '../types/domain.js';
-import type { ProjectContext } from '../types/context.js';
-import type { DataSourceAdapter, StreamTarget } from '../types/adapter.js';
 
 // Type-guard helpers (runtime checks that double as compile-time proofs)
 
@@ -205,13 +205,13 @@ describe('DataSourceAdapter interface shape', () => {
     const adapter: DataSourceAdapter = {
       id: 'mock',
       name: 'Mock Adapter',
-      probe: async () => ({ available: true }),
-      listProcesses: async () => [],
-      streamLog: async (_target, _onLine) => () => undefined,
-      listBroadcasts: async () => [],
-      resetBroadcastStream: async () => undefined,
-      getQueueStats: async () => ({ driver: 'redis', queues: [] }),
-      listFailedJobs: async () => [],
+      probe: () => Promise.resolve({ available: true }),
+      listProcesses: () => Promise.resolve([]),
+      streamLog: (_target, _onLine) => Promise.resolve(() => undefined),
+      listBroadcasts: () => Promise.resolve([]),
+      resetBroadcastStream: () => Promise.resolve(),
+      getQueueStats: () => Promise.resolve({ driver: 'redis', queues: [] }),
+      listFailedJobs: () => Promise.resolve([]),
     };
 
     expect(adapter.id).toBe('mock');

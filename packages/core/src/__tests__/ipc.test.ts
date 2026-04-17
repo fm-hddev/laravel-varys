@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { IPC_CHANNELS } from '../ipc/channels.js';
 import type { IpcChannel } from '../ipc/channels.js';
-import type { IpcPayloadMap, IpcRequest, IpcResponse } from '../ipc/payloads.js';
+import type { IpcRequest, IpcResponse } from '../ipc/payloads.js';
 
 describe('IPC_CHANNELS', () => {
   it('exposes all expected channel strings', () => {
@@ -59,12 +59,10 @@ describe('IpcChannel type', () => {
 
 describe('IpcPayloadMap coverage', () => {
   it('covers all 15 channels', () => {
-    // This is a compile-time check: TypeScript will error if IpcPayloadMap
-    // is missing a channel. We verify at runtime that all channels are in the map.
+    // IpcPayloadMap is a type, not a runtime object.
+    // Coverage is enforced at compile time: TypeScript will error if a channel
+    // is missing from IpcPayloadMap when IpcRequest<C> or IpcResponse<C> is used.
     const allChannels = Object.values(IPC_CHANNELS) as IpcChannel[];
-
-    // Build a set of keys that appear in IpcPayloadMap by checking against known channels
-    // (IpcPayloadMap is a type, not a runtime object — we verify coverage via channel count)
     expect(allChannels).toHaveLength(15);
   });
 });
