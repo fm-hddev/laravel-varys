@@ -1,0 +1,4 @@
+{"ID":"abc123def456","Names":"myapp-mysql-1","Image":"mysql:8.0","State":"running","Status":"Up 2 hours (healthy)","Labels":"com.docker.compose.project=myapp,com.docker.compose.service=mysql","Ports":"0.0.0.0:3306->3306/tcp"}
+{"ID":"bcd234efg567","Names":"myapp-redis-1","Image":"redis:7","State":"exited","Status":"Exited (1) 5 minutes ago","Labels":"com.docker.compose.project=myapp,com.docker.compose.service=redis","Ports":""}
+{"ID":"cde345fgh678","Names":"myapp-reverb-1","Image":"nginx:alpine","State":"running","Status":"Up 1 hour (unhealthy)","Labels":"com.docker.compose.project=myapp,com.docker.compose.service=reverb","Ports":"0.0.0.0:8080->80/tcp"}
+{"ID":"def456ghi789","Names":"otherapp-web-1","Image":"nginx:latest","State":"running","Status":"Up 3 hours","Labels":"com.docker.compose.project=otherapp,com.docker.compose.service=web","Ports":"0.0.0.0:80->80/tcp"}
