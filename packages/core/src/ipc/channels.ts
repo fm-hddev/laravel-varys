@@ -4,6 +4,8 @@ export const IPC_CHANNELS = {
   PROJECT_LIST_KNOWN_PATHS: 'project:listKnownPaths',
   PROJECT_REMOVE_KNOWN_PATH: 'project:removeKnownPath',
   PROJECT_HEALTH: 'project:health',
+  PROJECT_OPEN_DIALOG: 'project:openDialog',
+  PROJECT_UPDATE_ADAPTER_CONFIG: 'project:updateAdapterConfig',
   PROCESSES_LIST: 'processes:list',
   EVENTS_BROADCAST: 'events:broadcast',
   EVENTS_RESET_STREAM: 'events:resetStream',

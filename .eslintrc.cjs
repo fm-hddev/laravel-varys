@@ -33,5 +33,5 @@ module.exports = {
       },
     ],
   },
-  ignorePatterns: ['dist/', 'node_modules/', '*.cjs', '*.mjs', '**/vitest.config.ts'],
+  ignorePatterns: ['dist/', 'node_modules/', '*.cjs', '*.mjs', '**/vitest.config.ts', '**/vite.config.ts'],
 };

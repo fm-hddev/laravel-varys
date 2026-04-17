@@ -32,6 +32,14 @@ export interface IpcPayloadMap {
     request: void;
     response: HealthReport;
   };
+  'project:openDialog': {
+    request: void;
+    response: string | null;
+  };
+  'project:updateAdapterConfig': {
+    request: { adapterId: string; enabled: boolean };
+    response: void;
+  };
 
   // ─── Processes ──────────────────────────────────────────────────────────────
   'processes:list': {
