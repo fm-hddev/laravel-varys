@@ -21,6 +21,7 @@
     "@types/better-sqlite3": "^7.6.10",
     "@types/node": "^20.0.0",
     "@types/pg": "^8.11.5",
+    "@vitest/coverage-v8": "^4.1.4",
     "testcontainers": "^10.10.0",
     "typescript": "*",
     "vitest": "*"
