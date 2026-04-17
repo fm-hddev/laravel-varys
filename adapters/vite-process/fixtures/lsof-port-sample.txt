@@ -1,0 +1,2 @@
+COMMAND     PID     USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node      54321 frederic   22u  IPv4 0x1234567890ab      0t0  TCP *:5173 (LISTEN)
