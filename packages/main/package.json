@@ -7,28 +7,37 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "tsc",
-    "dev": "electron .",
+    "dev": "electron-forge start",
+    "make": "electron-forge make",
+    "package": "electron-forge package",
     "test": "vitest run"
   },
   "dependencies": {
-    "@varys/core": "*",
-    "@varys/adapter-docker": "*",
     "@varys/adapter-artisan-process": "*",
-    "@varys/adapter-vite-process": "*",
-    "@varys/adapter-log-file": "*",
-    "@varys/adapter-laravel-queue": "*",
-    "@varys/adapter-reverb-redis": "*",
+    "@varys/adapter-docker": "*",
     "@varys/adapter-dotenv": "*",
+    "@varys/adapter-laravel-queue": "*",
+    "@varys/adapter-log-file": "*",
+    "@varys/adapter-reverb-redis": "*",
     "@varys/adapter-varys-agent": "*",
+    "@varys/adapter-vite-process": "*",
+    "@varys/core": "*",
     "electron": "^30.0.0",
     "pino": "^9.0.0",
     "uuid": "^9.0.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-dmg": "^7.11.1",
+    "@electron-forge/plugin-vite": "^7.11.1",
+    "@playwright/test": "^1.59.1",
     "@types/node": "^20.0.0",
     "@types/uuid": "^9.0.0",
+    "playwright": "^1.59.1",
     "typescript": "*",
+    "vite": "^8.0.8",
     "vitest": "*"
   }
 }
