@@ -1,0 +1,15 @@
+# CI stub — will be expanded in later sessions
+name: CI
+
+on:
+  push:
+    branches: [main, 'chore/**', 'feat/**', 'fix/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: placeholder
+        run: echo "CI stub — not yet configured"
