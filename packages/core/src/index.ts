@@ -13,3 +13,7 @@ export type {
 export type { ProjectContext } from './types/context.js';
 
 export type { DataSourceAdapter, StreamTarget } from './types/adapter.js';
+
+export { IPC_CHANNELS } from './ipc/channels.js';
+export type { IpcChannel } from './ipc/channels.js';
+export type { IpcPayloadMap, IpcRequest, IpcResponse } from './ipc/payloads.js';
