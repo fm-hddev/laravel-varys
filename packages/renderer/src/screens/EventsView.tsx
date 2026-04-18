@@ -39,6 +39,12 @@ export default function EventsView() {
     }
   }
 
+  function handleClearAll() {
+    clearAll();
+    setChannelFilter('');
+    setEventFilter('');
+  }
+
   const filtered = broadcasts.filter(
     (b) =>
       b.channel.toLowerCase().includes(channelFilter.toLowerCase()) &&
@@ -112,7 +118,7 @@ export default function EventsView() {
               </button>
               <button
                 type="button"
-                onClick={clearAll}
+                onClick={handleClearAll}
                 aria-label="Vider la liste des événements"
                 className="rounded px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
                 style={{ background: 'var(--bg-card)', color: 'var(--text-1)', border: '1px solid var(--border)' }}
