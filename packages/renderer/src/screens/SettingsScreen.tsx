@@ -1,3 +1,4 @@
+import { Desktop, Moon, Sun } from '@phosphor-icons/react';
 import type { HealthReport as HealthReportType } from '@varys/core';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -5,12 +6,20 @@ import { useNavigate } from 'react-router-dom';
 import { AdapterConfig } from '@/components/AdapterConfig';
 import { HealthReport } from '@/components/HealthReport';
 import { KnownProjectsList } from '@/components/KnownProjectsList';
+import { useTheme, type ThemeMode } from '@/components/ThemeProvider';
 import { useIpc } from '@/hooks/useIpc';
 import { useProjectStore } from '@/store/useProjectStore';
+
+const THEME_OPTIONS: { value: ThemeMode; label: string; icon: React.ReactNode }[] = [
+  { value: 'light', label: 'Clair', icon: <Sun size={16} /> },
+  { value: 'dark', label: 'Sombre', icon: <Moon size={16} /> },
+  { value: 'system', label: 'Système', icon: <Desktop size={16} /> },
+];
 
 export default function SettingsScreen() {
   const ipc = useIpc();
   const navigate = useNavigate();
+  const { mode, setMode } = useTheme();
   const { activePath, setActivePath, knownPaths, setKnownPaths } = useProjectStore();
 
   const [report, setReport] = useState<HealthReportType | null>(null);
@@ -85,6 +94,36 @@ export default function SettingsScreen() {
             ← Retour
           </button>
         </div>
+
+        <section className="mb-8">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-neutral-500">
+            Apparence
+          </h2>
+          <div className="rounded-lg border border-neutral-800 bg-neutral-900">
+            <div className="flex items-center justify-between gap-3 px-3 py-2">
+              <span className="text-sm text-neutral-300">Thème</span>
+              <div className="flex gap-2">
+                {THEME_OPTIONS.map(({ value, label, icon }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setMode(value)}
+                    aria-pressed={mode === value}
+                    className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                    style={{
+                      border: mode === value ? '2px solid var(--hd-violet-500)' : '2px solid var(--border)',
+                      color: mode === value ? 'var(--hd-violet-400)' : 'var(--text-3)',
+                      background: 'var(--bg-base)',
+                    }}
+                  >
+                    {icon}
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section className="mb-8">
           <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-neutral-500">
