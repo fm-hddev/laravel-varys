@@ -1,7 +1,6 @@
 import { Lightning, TerminalWindow } from '@phosphor-icons/react';
 import { useState } from 'react';
 
-import { BroadcastFilters } from '@/components/BroadcastFilters';
 import { BroadcastItem } from '@/components/BroadcastItem';
 import { LogPanel } from '@/components/LogPanel';
 import { ViewTabs } from '@/components/ViewTabs';
@@ -67,30 +66,47 @@ export default function EventsView() {
 
       {activeTab === 'events' && (
         <div className="flex flex-1 flex-col overflow-hidden">
-          <div className="flex items-center justify-between gap-3 flex-wrap px-6 py-4 flex-shrink-0"
+          {/* Header */}
+          <div
+            className="flex items-center justify-between px-6 py-4 flex-shrink-0"
             style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' }}
           >
-            <h1 className="text-base font-semibold" style={{ color: 'var(--text-1)' }}>
-              Événements
+            <div className="flex items-center gap-2">
+              <h1 className="text-base font-semibold" style={{ color: 'var(--text-1)' }}>
+                Événements
+              </h1>
               {paused && pending.length > 0 && (
                 <span
-                  className="ml-2 rounded-full px-2 py-0.5 text-xs font-bold"
+                  className="rounded-full px-2 py-0.5 text-xs font-bold"
                   style={{ background: 'var(--hd-amber-500, #F59E0B)', color: '#000' }}
                 >
                   +{pending.length} en attente
                 </span>
               )}
-            </h1>
-            <div className="flex gap-2">
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5">
+                <span
+                  className="inline-block h-2 w-2 rounded-full"
+                  style={{
+                    background: paused ? 'var(--hd-amber-500, #F59E0B)' : 'var(--hd-green-500, #22C55E)',
+                    boxShadow: paused ? 'none' : '0 0 6px var(--hd-green-500, #22C55E)',
+                  }}
+                />
+                <span className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
+                  {paused ? 'EN PAUSE' : 'LIVE'}
+                </span>
+              </div>
               <button
                 type="button"
                 onClick={handlePauseResume}
                 aria-label={paused ? 'Reprendre la réception des événements' : 'Mettre en pause la réception'}
-                className={`rounded-lg px-3 py-1.5 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
-                  paused
-                    ? 'bg-yellow-800 text-yellow-200 hover:bg-yellow-700'
-                    : 'bg-neutral-800 text-neutral-200 hover:bg-neutral-700'
-                }`}
+                className="rounded px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                style={{
+                  background: paused ? 'var(--hd-amber-500, #F59E0B)' : 'var(--bg-card)',
+                  color: paused ? '#000' : 'var(--text-1)',
+                  border: '1px solid var(--border)',
+                }}
               >
                 {paused ? 'Reprendre' : 'Pause'}
               </button>
@@ -98,20 +114,51 @@ export default function EventsView() {
                 type="button"
                 onClick={clearAll}
                 aria-label="Vider la liste des événements"
-                className="rounded-lg bg-neutral-800 px-3 py-1.5 text-sm font-medium text-neutral-200 hover:bg-neutral-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                className="rounded px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                style={{ background: 'var(--bg-card)', color: 'var(--text-1)', border: '1px solid var(--border)' }}
               >
                 Vider
               </button>
             </div>
           </div>
 
-          <div className="px-6 py-3 flex-shrink-0" style={{ borderBottom: '1px solid var(--border)' }}>
-            <BroadcastFilters
-              channel={channelFilter}
-              event={eventFilter}
-              onChannelChange={setChannelFilter}
-              onEventChange={setEventFilter}
+          {/* Filters */}
+          <div
+            className="flex items-center gap-3 px-6 py-3 flex-shrink-0"
+            style={{ borderBottom: '1px solid var(--border)' }}
+          >
+            <input
+              type="search"
+              placeholder="Filtrer par canal…"
+              value={channelFilter}
+              onChange={(e) => setChannelFilter(e.target.value)}
+              aria-label="Filtrer par canal"
+              className="flex-1 min-w-0 rounded px-3 py-1.5 text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+              style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-1)' }}
             />
+            <input
+              type="search"
+              placeholder="Filtrer par événement…"
+              value={eventFilter}
+              onChange={(e) => setEventFilter(e.target.value)}
+              aria-label="Filtrer par événement"
+              className="flex-1 min-w-0 rounded px-3 py-1.5 text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+              style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-1)' }}
+            />
+            <span className="flex-shrink-0 text-xs tabular-nums" style={{ color: 'var(--text-muted)' }}>
+              {filtered.length} / {broadcasts.length}
+            </span>
+          </div>
+
+          {/* Column headers */}
+          <div
+            className="flex items-center gap-2.5 px-4 py-2 flex-shrink-0 text-xs font-medium"
+            style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)', background: 'var(--bg-base)' }}
+          >
+            <span className="w-28 shrink-0">Canal</span>
+            <span className="flex-1">Événement</span>
+            <span className="w-16 shrink-0 text-right">Heure</span>
+            <span className="w-16 shrink-0" />
           </div>
 
           {broadcasts.length === 0 ? (
