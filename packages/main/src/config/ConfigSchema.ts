@@ -18,6 +18,20 @@ export const ConfigSchema = z.object({
     })
     .default({}),
   adapters: z.record(z.string(), z.object({ enabled: z.boolean().default(true) })).default({}),
+  projectOverrides: z
+    .record(
+      z.string(),
+      z.object({
+        dbHost: z.string().optional(),
+        dbPort: z.number().optional(),
+        redisHost: z.string().optional(),
+        redisPort: z.number().optional(),
+        reverbHost: z.string().optional(),
+        reverbPort: z.number().optional(),
+        appUrl: z.string().optional(),
+      }),
+    )
+    .default({}),
 });
 
 export type Config = z.infer<typeof ConfigSchema>;

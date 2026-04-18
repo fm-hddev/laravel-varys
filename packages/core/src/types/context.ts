@@ -7,3 +7,14 @@ export interface ProjectContext {
   redisHost: string;
   redisPort: number;
 }
+
+/** Connection overrides stored in Varys config (not in the project's .env). */
+export interface ProjectOverrides {
+  dbHost?: string;
+  dbPort?: number;
+  redisHost?: string;
+  redisPort?: number;
+  reverbHost?: string;
+  reverbPort?: number;
+  appUrl?: string;
+}

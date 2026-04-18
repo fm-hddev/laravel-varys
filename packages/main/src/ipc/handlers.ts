@@ -1,7 +1,10 @@
-import type { DotenvAdapter } from '@varys/adapter-dotenv';
+import path from 'node:path';
+
+import { DotenvAdapter } from '@varys/adapter-dotenv';
 import type { LogFileAdapter } from '@varys/adapter-log-file';
+import type { ReverbRedisAdapter } from '@varys/adapter-reverb-redis';
 import { IPC_CHANNELS } from '@varys/core';
-import type { LogLine, ProjectContext, Unsubscribe } from '@varys/core';
+import type { Broadcast, LogLine, ProjectContext, ProjectOverrides, Unsubscribe } from '@varys/core';
 import { dialog, ipcMain } from 'electron';
 
 import type { AdapterRegistry } from '../adapters/AdapterRegistry';
@@ -16,10 +19,51 @@ export interface AppContext {
   dotenvAdapter: DotenvAdapter | null;
   activePath: string | null;
   ctx: ProjectContext | null;
+  /** Re-registers all context-dependent adapters after a project switch. */
+  rebuildAdapters: (ctx: ProjectContext) => void;
+}
+
+/** Merge stored overrides into a ProjectContext, updating both env dict and parsed fields. */
+export function applyOverrides(ctx: ProjectContext, overrides: ProjectOverrides): ProjectContext {
+  const env = { ...ctx.env };
+  if (overrides.dbHost !== undefined) env['DB_HOST'] = overrides.dbHost;
+  if (overrides.dbPort !== undefined) env['DB_PORT'] = String(overrides.dbPort);
+  if (overrides.redisHost !== undefined) env['REDIS_HOST'] = overrides.redisHost;
+  if (overrides.redisPort !== undefined) env['REDIS_PORT'] = String(overrides.redisPort);
+  if (overrides.reverbHost !== undefined) env['REVERB_HOST'] = overrides.reverbHost;
+  if (overrides.reverbPort !== undefined) env['REVERB_PORT'] = String(overrides.reverbPort);
+  if (overrides.appUrl !== undefined) env['APP_URL'] = overrides.appUrl;
+  return {
+    ...ctx,
+    env,
+    redisHost: overrides.redisHost ?? ctx.redisHost,
+    redisPort: overrides.redisPort ?? ctx.redisPort,
+  };
 }
 
 // Map from subscribe key → unsubscribe function
 const activeStreams = new Map<string, Unsubscribe>();
+
+// Reverb broadcast buffer (sliding window, max 500 entries)
+const broadcastBuffer: Broadcast[] = [];
+let reverbUnsub: Unsubscribe | null = null;
+
+async function startReverbStream(registry: AdapterRegistry): Promise<void> {
+  if (reverbUnsub) {
+    await reverbUnsub();
+    reverbUnsub = null;
+  }
+  const adapter = registry.getById('reverb-redis') as ReverbRedisAdapter | undefined;
+  if (!adapter) return;
+  try {
+    reverbUnsub = await adapter.streamBroadcasts((broadcast) => {
+      broadcastBuffer.push(broadcast);
+      if (broadcastBuffer.length > 500) broadcastBuffer.shift();
+    });
+  } catch {
+    // WebSocket connection failed — broadcasts unavailable until next project reload
+  }
+}
 
 function streamKey(req: { type: string; processId?: string; file?: string }): string {
   if (req.type === 'processLog' && 'processId' in req) {
@@ -34,19 +78,33 @@ function streamKey(req: { type: string; processId?: string; file?: string }): st
 export function setupIpcHandlers(appCtx: AppContext): void {
   const { configStore, registry } = appCtx;
 
+  // Wrap rebuildAdapters so the Reverb stream restarts whenever adapters change
+  const originalRebuild = appCtx.rebuildAdapters;
+  appCtx.rebuildAdapters = (ctx) => {
+    originalRebuild(ctx);
+    void startReverbStream(registry);
+  };
+
   // project:setActivePath
   ipcMain.handle(IPC_CHANNELS.PROJECT_SET_ACTIVE_PATH, async (_e, arg: { path: string }) => {
     configStore.setActivePath(arg.path);
     appCtx.activePath = arg.path;
     newSession();
 
-    // Rebuild dotenv adapter for the new path and re-probe
-    if (appCtx.dotenvAdapter !== null) {
-      try {
-        appCtx.ctx = await appCtx.dotenvAdapter.buildContext(arg.path);
-      } catch {
-        appCtx.ctx = null;
-      }
+    // Ensure a DotenvAdapter exists for this path (handles first-launch case)
+    if (appCtx.dotenvAdapter === null) {
+      const dotenv = new DotenvAdapter(path.join(arg.path, '.env'));
+      registry.register(dotenv);
+      appCtx.dotenvAdapter = dotenv;
+    }
+
+    try {
+      const ctx = await appCtx.dotenvAdapter.buildContext(arg.path);
+      const overrides = configStore.getProjectOverrides(arg.path);
+      appCtx.ctx = applyOverrides(ctx, overrides);
+      appCtx.rebuildAdapters(appCtx.ctx);
+    } catch {
+      appCtx.ctx = null;
     }
   });
 
@@ -76,6 +134,45 @@ export function setupIpcHandlers(appCtx: AppContext): void {
     return result.canceled || result.filePaths.length === 0 ? null : result.filePaths[0] ?? null;
   });
 
+  // project:getOverrides
+  ipcMain.handle(IPC_CHANNELS.PROJECT_GET_OVERRIDES, () => {
+    const projectPath = appCtx.activePath;
+    const overrides = projectPath ? configStore.getProjectOverrides(projectPath) : {};
+    const env = appCtx.ctx?.env ?? {};
+    return {
+      overrides,
+      envDefaults: {
+        dbHost: env['DB_HOST'] ?? '127.0.0.1',
+        dbPort: parseInt(env['DB_PORT'] ?? '3306', 10),
+        redisHost: env['REDIS_HOST'] ?? '127.0.0.1',
+        redisPort: parseInt(env['REDIS_PORT'] ?? '6379', 10),
+        reverbHost: env['REVERB_HOST'] ?? '127.0.0.1',
+        reverbPort: parseInt(env['REVERB_PORT'] ?? '8080', 10),
+        appUrl: env['APP_URL'] ?? '',
+      },
+    };
+  });
+
+  // project:setOverrides
+  ipcMain.handle(
+    IPC_CHANNELS.PROJECT_SET_OVERRIDES,
+    async (_e, arg: { overrides: ProjectOverrides }) => {
+      const projectPath = appCtx.activePath;
+      if (!projectPath) return;
+      configStore.setProjectOverrides(projectPath, arg.overrides);
+      // Rebuild adapters with updated overrides
+      if (appCtx.dotenvAdapter) {
+        try {
+          const ctx = await appCtx.dotenvAdapter.buildContext(projectPath);
+          appCtx.ctx = applyOverrides(ctx, arg.overrides);
+          appCtx.rebuildAdapters(appCtx.ctx);
+        } catch {
+          // keep existing context
+        }
+      }
+    },
+  );
+
   // project:updateAdapterConfig
   ipcMain.handle(
     IPC_CHANNELS.PROJECT_UPDATE_ADAPTER_CONFIG,
@@ -91,19 +188,12 @@ export function setupIpcHandlers(appCtx: AppContext): void {
     return results.flatMap((r) => (r.status === 'fulfilled' ? r.value : []));
   });
 
-  // events:broadcast
-  ipcMain.handle(IPC_CHANNELS.EVENTS_BROADCAST, async () => {
-    const reverbAdapter = registry.getById('reverb-redis');
-    if (!reverbAdapter) return [];
-    return reverbAdapter.listBroadcasts();
-  });
+  // events:broadcast — returns buffered broadcasts accumulated from the Redis subscription
+  ipcMain.handle(IPC_CHANNELS.EVENTS_BROADCAST, () => [...broadcastBuffer]);
 
-  // events:resetStream
-  ipcMain.handle(IPC_CHANNELS.EVENTS_RESET_STREAM, async () => {
-    const reverbAdapter = registry.getById('reverb-redis');
-    if (reverbAdapter) {
-      await reverbAdapter.resetBroadcastStream();
-    }
+  // events:resetStream — clears the broadcast buffer
+  ipcMain.handle(IPC_CHANNELS.EVENTS_RESET_STREAM, () => {
+    broadcastBuffer.length = 0;
   });
 
   // queues:stats
@@ -145,16 +235,10 @@ export function setupIpcHandlers(appCtx: AppContext): void {
 
       if (arg.type === 'processLog') {
         const processId = (arg as { type: 'processLog'; processId: string }).processId;
-        const adapters = registry.getAll();
-        for (const adapter of adapters) {
-          try {
-            const onLine = (line: LogLine) =>
-              pushToRenderer(IPC_CHANNELS.STREAM_PROCESS_LOG, line);
-            unsub = await adapter.streamLog({ type: 'processLog', processId }, onLine);
-            break;
-          } catch {
-            // try next adapter
-          }
+        const dockerAdapter = registry.getById('docker');
+        if (dockerAdapter) {
+          const onLine = (line: LogLine) => pushToRenderer(IPC_CHANNELS.STREAM_PROCESS_LOG, line);
+          unsub = await dockerAdapter.streamLog({ type: 'processLog', processId }, onLine);
         }
       } else if (arg.type === 'appLog') {
         const file = (arg as { type: 'appLog'; file: string }).file;

@@ -1,0 +1,13 @@
+diff --git a/node_modules/ws/lib/buffer-util.js b/node_modules/ws/lib/buffer-util.js
+index f7536e2..b85c3b7 100644
+--- a/node_modules/ws/lib/buffer-util.js
++++ b/node_modules/ws/lib/buffer-util.js
+@@ -112,7 +112,7 @@ module.exports = {
+ };
+ 
+ /* istanbul ignore else  */
+-if (!process.env.WS_NO_BUFFER_UTIL) {
++if (false) { // patched: bufferutil not available in Electron bundle
+   try {
+     const bufferUtil = require('bufferutil');
+ 

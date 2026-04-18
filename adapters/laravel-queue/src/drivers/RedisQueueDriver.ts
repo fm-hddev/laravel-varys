@@ -1,4 +1,5 @@
 import type { Redis } from 'ioredis';
+import { Redis as RedisClient } from 'ioredis';
 
 export interface RedisQueueDriverOptions {
   host: string;
@@ -28,8 +29,7 @@ export class RedisQueueDriver {
   private async getClient(): Promise<Redis> {
     if (this.client) return this.client;
 
-    const { Redis } = await import('ioredis');
-    this.client = new Redis({
+    this.client = new RedisClient({
       host: this.options.host,
       port: this.options.port,
       password: this.options.password,

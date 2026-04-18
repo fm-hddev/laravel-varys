@@ -6,6 +6,8 @@ export const IPC_CHANNELS = {
   PROJECT_HEALTH: 'project:health',
   PROJECT_OPEN_DIALOG: 'project:openDialog',
   PROJECT_UPDATE_ADAPTER_CONFIG: 'project:updateAdapterConfig',
+  PROJECT_GET_OVERRIDES: 'project:getOverrides',
+  PROJECT_SET_OVERRIDES: 'project:setOverrides',
   PROCESSES_LIST: 'processes:list',
   EVENTS_BROADCAST: 'events:broadcast',
   EVENTS_RESET_STREAM: 'events:resetStream',

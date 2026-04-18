@@ -1,5 +1,8 @@
 import { FailedJobsPanel } from '@/components/FailedJobsPanel';
+import { LogPanel } from '@/components/LogPanel';
 import { QueueStatCard } from '@/components/QueueStatCard';
+import { useLogStream } from '@/hooks/useLogStream';
+import { useProcessStream } from '@/hooks/useProcessStream';
 import { useFailedJobs, useQueueStats } from '@/hooks/useQueueStats';
 
 function SkeletonCard() {
@@ -21,6 +24,12 @@ function SkeletonCard() {
 export default function QueuesView() {
   const { data: stats, isLoading: statsLoading, isError: statsError } = useQueueStats();
   const { data: failedJobs, isLoading: jobsLoading } = useFailedJobs();
+  const { data: processes } = useProcessStream();
+
+  const workerProcess = processes?.find((p) =>
+    p.name.toLowerCase().includes('queue_worker') || p.name.toLowerCase().includes('queue-worker'),
+  );
+  const workerLogs = useLogStream(workerProcess?.id ?? '', !!workerProcess);
 
   const driver = stats?.driver;
 
@@ -55,9 +64,9 @@ export default function QueuesView() {
 
         {stats && stats.queues.length === 0 && (
           <div className="rounded-xl border border-neutral-800 bg-neutral-900 px-6 py-12 text-center">
-            <p className="text-sm font-medium text-neutral-300">Aucune queue détectée</p>
+            <p className="text-sm font-medium text-neutral-300">Aucun job en attente</p>
             <p className="mt-1 text-xs text-neutral-500">
-              Vérifiez DB_CONNECTION et l'accessibilité de la base de données.
+              La table jobs est vide — aucun job en attente ni en traitement.
             </p>
           </div>
         )}
@@ -73,6 +82,16 @@ export default function QueuesView() {
         {/* Failed jobs */}
         {!jobsLoading && failedJobs !== undefined && (
           <FailedJobsPanel jobs={failedJobs} />
+        )}
+
+        {/* Queue worker logs */}
+        {workerProcess && (
+          <div>
+            <h2 className="mb-2 text-sm font-semibold text-neutral-400">
+              {workerProcess.name}
+            </h2>
+            <LogPanel lines={workerLogs} />
+          </div>
         )}
       </div>
     </main>

@@ -1,4 +1,5 @@
 import type { Pool, RowDataPacket } from 'mysql2/promise';
+import * as mysql from 'mysql2/promise';
 
 import type { FailedJobRow, QueueCount } from './types.js';
 
@@ -24,10 +25,9 @@ export class MysqlQueueDriver {
     this.options = options;
   }
 
-  private async getPool(): Promise<Pool> {
+  private getPool(): Pool {
     if (this.pool) return this.pool;
 
-    const mysql = await import('mysql2/promise');
     this.pool = mysql.createPool({
       host: this.options.host,
       port: this.options.port,
@@ -42,7 +42,7 @@ export class MysqlQueueDriver {
 
   private async ensureSchema(): Promise<void> {
     if (this.schemaReady) return;
-    const pool = await this.getPool();
+    const pool = this.getPool();
     await pool.execute(`
       CREATE TABLE IF NOT EXISTS jobs (
         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -70,7 +70,7 @@ export class MysqlQueueDriver {
 
   async probe(): Promise<boolean> {
     try {
-      const pool = await this.getPool();
+      const pool = this.getPool();
       const [rows] = await pool.execute<RowDataPacket[]>('SELECT 1');
       if (rows.length > 0) {
         await this.ensureSchema();
@@ -84,7 +84,7 @@ export class MysqlQueueDriver {
 
   async getQueueCounts(): Promise<QueueCount[]> {
     await this.ensureSchema();
-    const pool = await this.getPool();
+    const pool = this.getPool();
     const [rows] = await pool.execute<RowDataPacket[]>(
       'SELECT queue, COUNT(*) as count FROM jobs GROUP BY queue',
     );
@@ -93,7 +93,7 @@ export class MysqlQueueDriver {
 
   async getFailedJobs(limit = 50): Promise<FailedJobRow[]> {
     await this.ensureSchema();
-    const pool = await this.getPool();
+    const pool = this.getPool();
     const [rows] = await pool.execute<RowDataPacket[]>(
       'SELECT * FROM failed_jobs ORDER BY id DESC LIMIT ?',
       [limit],
@@ -111,7 +111,7 @@ export class MysqlQueueDriver {
     }>,
   ): Promise<void> {
     await this.ensureSchema();
-    const pool = await this.getPool();
+    const pool = this.getPool();
     for (const row of rows) {
       await pool.execute(
         'INSERT INTO jobs (queue, payload, attempts, available_at, created_at) VALUES (?, ?, ?, ?, ?)',
@@ -122,7 +122,7 @@ export class MysqlQueueDriver {
 
   async insertFailedJobs(rows: FailedJobRow[]): Promise<void> {
     await this.ensureSchema();
-    const pool = await this.getPool();
+    const pool = this.getPool();
     for (const row of rows) {
       await pool.execute(
         'INSERT INTO failed_jobs (uuid, connection, queue, payload, exception, failed_at) VALUES (?, ?, ?, ?, ?, ?)',

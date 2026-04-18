@@ -11,7 +11,8 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
-    "prepare": "husky"
+    "prepare": "husky && patch-package",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
@@ -23,6 +24,7 @@
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.29.1",
     "husky": "^9.0.11",
+    "patch-package": "^8.0.1",
     "prettier": "^3.2.5",
     "typescript": "^5.4.5",
     "vitest": "^1.5.0"

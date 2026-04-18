@@ -99,4 +99,13 @@ export class ConfigStore {
     this.config.adapters[adapterId] = { ...current, enabled };
     this.save();
   }
+
+  getProjectOverrides(projectPath: string) {
+    return this.config.projectOverrides[projectPath] ?? {};
+  }
+
+  setProjectOverrides(projectPath: string, overrides: Config['projectOverrides'][string]): void {
+    this.config.projectOverrides[projectPath] = overrides;
+    this.save();
+  }
 }

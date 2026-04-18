@@ -7,12 +7,11 @@ const config: ForgeConfig = {
     name: 'Varys',
     executableName: 'varys',
     appBundleId: 'com.fredmoras8.varys',
-    asar: true,
-    // Native modules that must be excluded from asar
-    asarUnpack: [
-      'node_modules/better-sqlite3/**',
-      'node_modules/@mapbox/node-pre-gyp/**',
-    ],
+    asar: {
+      // Native modules that must be excluded from asar
+      unpack: '{node_modules/better-sqlite3,node_modules/@mapbox/node-pre-gyp}/**',
+    },
+    derefSymlinks: true,
   },
   rebuildConfig: {},
   makers: [new MakerDMG({ name: 'Varys' })],
@@ -22,12 +21,12 @@ const config: ForgeConfig = {
       build: [
         {
           entry: 'src/index.ts',
-          config: 'vite.main.config.ts',
+          config: 'vite.main.config.mts',
           target: 'main',
         },
         {
           entry: 'src/preload.ts',
-          config: 'vite.preload.config.ts',
+          config: 'vite.preload.config.mts',
           target: 'preload',
         },
       ],

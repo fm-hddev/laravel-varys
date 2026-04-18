@@ -1,4 +1,4 @@
-import type { Pool } from 'pg';
+import { Pool } from 'pg';
 
 import type { FailedJobRow, QueueCount } from './types.js';
 
@@ -25,10 +25,9 @@ export class PgQueueDriver {
     this.options = options;
   }
 
-  private async getPool(): Promise<Pool> {
+  private getPool(): Pool {
     if (this.pool) return this.pool;
 
-    const { Pool } = await import('pg');
     this.pool = new Pool({
       host: this.options.host,
       port: this.options.port,
@@ -44,7 +43,7 @@ export class PgQueueDriver {
 
   private async ensureSchema(): Promise<void> {
     if (this.schemaReady) return;
-    const pool = await this.getPool();
+    const pool = this.getPool();
     const client = await pool.connect();
     try {
       await client.query(`
@@ -77,7 +76,7 @@ export class PgQueueDriver {
 
   async probe(): Promise<boolean> {
     try {
-      const pool = await this.getPool();
+      const pool = this.getPool();
       const client = await pool.connect();
       try {
         await client.query('SELECT 1');
@@ -93,7 +92,7 @@ export class PgQueueDriver {
 
   async getQueueCounts(): Promise<QueueCount[]> {
     await this.ensureSchema();
-    const pool = await this.getPool();
+    const pool = this.getPool();
     const res = await pool.query<{ queue: string; count: string }>(
       'SELECT queue, COUNT(*) as count FROM jobs GROUP BY queue',
     );
@@ -102,7 +101,7 @@ export class PgQueueDriver {
 
   async getFailedJobs(limit = 50): Promise<FailedJobRow[]> {
     await this.ensureSchema();
-    const pool = await this.getPool();
+    const pool = this.getPool();
     const res = await pool.query<FailedJobRow>(
       'SELECT * FROM failed_jobs ORDER BY id DESC LIMIT $1',
       [limit],
@@ -120,7 +119,7 @@ export class PgQueueDriver {
     }>,
   ): Promise<void> {
     await this.ensureSchema();
-    const pool = await this.getPool();
+    const pool = this.getPool();
     for (const row of rows) {
       await pool.query(
         'INSERT INTO jobs (queue, payload, attempts, available_at, created_at) VALUES ($1, $2, $3, $4, $5)',
@@ -131,7 +130,7 @@ export class PgQueueDriver {
 
   async insertFailedJobs(rows: FailedJobRow[]): Promise<void> {
     await this.ensureSchema();
-    const pool = await this.getPool();
+    const pool = this.getPool();
     for (const row of rows) {
       await pool.query(
         'INSERT INTO failed_jobs (uuid, connection, queue, payload, exception, failed_at) VALUES ($1, $2, $3, $4, $5, $6)',

@@ -1,4 +1,4 @@
-import type BetterSqlite3 from 'better-sqlite3';
+import BetterSqlite3 from 'better-sqlite3';
 
 import type { FailedJobRow, JobRow, QueueCount } from './types.js';
 
@@ -16,10 +16,9 @@ export class SqliteQueueDriver {
     this.filename = filename;
   }
 
-  private async getDb(): Promise<InstanceType<typeof BetterSqlite3>> {
+  private getDb(): InstanceType<typeof BetterSqlite3> {
     if (this.db) return this.db;
 
-    const BetterSqlite3 = (await import('better-sqlite3')).default;
     this.db = new BetterSqlite3(this.filename);
     this.ensureSchema();
     return this.db;
@@ -49,48 +48,50 @@ export class SqliteQueueDriver {
     `);
   }
 
-  async probe(): Promise<boolean> {
+  probe(): Promise<boolean> {
     try {
-      const db = await this.getDb();
+      const db = this.getDb();
       db.prepare('SELECT 1').get();
-      return true;
+      return Promise.resolve(true);
     } catch {
-      return false;
+      return Promise.resolve(false);
     }
   }
 
-  async getQueueCounts(): Promise<QueueCount[]> {
-    const db = await this.getDb();
-    return db
-      .prepare('SELECT queue, COUNT(*) as count FROM jobs GROUP BY queue')
-      .all() as QueueCount[];
+  getQueueCounts(): Promise<QueueCount[]> {
+    const db = this.getDb();
+    return Promise.resolve(
+      db.prepare('SELECT queue, COUNT(*) as count FROM jobs GROUP BY queue').all() as QueueCount[],
+    );
   }
 
-  async getFailedJobs(limit = 50): Promise<FailedJobRow[]> {
-    const db = await this.getDb();
-    return db
-      .prepare('SELECT * FROM failed_jobs ORDER BY id DESC LIMIT ?')
-      .all(limit) as FailedJobRow[];
+  getFailedJobs(limit = 50): Promise<FailedJobRow[]> {
+    const db = this.getDb();
+    return Promise.resolve(
+      db.prepare('SELECT * FROM failed_jobs ORDER BY id DESC LIMIT ?').all(limit) as FailedJobRow[],
+    );
   }
 
-  async insertJobs(rows: JobRow[]): Promise<void> {
-    const db = await this.getDb();
+  insertJobs(rows: JobRow[]): Promise<void> {
+    const db = this.getDb();
     const stmt = db.prepare(
       'INSERT INTO jobs (queue, payload, attempts, available_at, created_at) VALUES (?, ?, ?, ?, ?)',
     );
     for (const row of rows) {
       stmt.run(row.queue, row.payload, row.attempts, row.available_at, row.created_at);
     }
+    return Promise.resolve();
   }
 
-  async insertFailedJobs(rows: FailedJobRow[]): Promise<void> {
-    const db = await this.getDb();
+  insertFailedJobs(rows: FailedJobRow[]): Promise<void> {
+    const db = this.getDb();
     const stmt = db.prepare(
       'INSERT INTO failed_jobs (uuid, connection, queue, payload, exception, failed_at) VALUES (?, ?, ?, ?, ?, ?)',
     );
     for (const row of rows) {
       stmt.run(row.uuid, row.connection, row.queue, row.payload, row.exception, row.failed_at);
     }
+    return Promise.resolve();
   }
 
   destroy(): void {

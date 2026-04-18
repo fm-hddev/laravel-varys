@@ -2,11 +2,20 @@ import { useState } from 'react';
 
 import { BroadcastFilters } from '@/components/BroadcastFilters';
 import { BroadcastItem } from '@/components/BroadcastItem';
+import { LogPanel } from '@/components/LogPanel';
 import { useEventsStream } from '@/hooks/useEventsStream';
+import { useLogStream } from '@/hooks/useLogStream';
+import { useProcessStream } from '@/hooks/useProcessStream';
 import { useEventsStore } from '@/store/useEventsStore';
 
 export default function EventsView() {
   useEventsStream();
+
+  const { data: processes } = useProcessStream();
+  const reverbProcess = processes?.find((p) =>
+    p.name.toLowerCase().includes('reverb'),
+  );
+  const reverbLogs = useLogStream(reverbProcess?.id ?? '', !!reverbProcess);
 
   const broadcasts = useEventsStore((s) => s.broadcasts);
   const pending = useEventsStore((s) => s.pending);
@@ -100,6 +109,15 @@ export default function EventsView() {
                 <BroadcastItem broadcast={b} index={i} />
               </div>
             ))}
+          </div>
+        )}
+        {/* Reverb container logs */}
+        {reverbProcess && (
+          <div>
+            <h2 className="mb-2 text-sm font-semibold text-neutral-400">
+              {reverbProcess.name}
+            </h2>
+            <LogPanel lines={reverbLogs} />
           </div>
         )}
       </div>
