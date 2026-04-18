@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  ci:
-    runs-on: macos-latest
+  lint-typecheck-test:
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -41,6 +41,31 @@ jobs:
         run: npm run test --workspaces --if-present
         env:
           TESTCONTAINERS_RYUK_DISABLED: 'true'
+
+  build-electron:
+    runs-on: macos-latest
+    needs: lint-typecheck-test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build core
+        run: npm run build --workspace=packages/core
+
+      - name: Build adapters
+        run: |
+          for dir in adapters/*/; do
+            pkg=$(node -p "require('./${dir}package.json').name")
+            npm run build --workspace="$pkg"
+          done
 
       - name: Build renderer
         run: npm run build --workspace=packages/renderer
