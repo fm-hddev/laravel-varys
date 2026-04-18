@@ -1,1 +1,106 @@
 @import "tailwindcss";
+
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ── HDDEV Design Tokens ── */
+:root {
+  --hd-violet-50:  #F5F3FF;
+  --hd-violet-100: #EDE9FE;
+  --hd-violet-200: #DDD6FE;
+  --hd-violet-300: #C4B5FD;
+  --hd-violet-400: #A78BFA;
+  --hd-violet-500: #8B5CF6;
+  --hd-violet-600: #7C3AED;
+  --hd-violet-700: #6D28D9;
+  --hd-violet-800: #5B21B6;
+  --hd-violet-900: #4C1D95;
+
+  --hd-emerald-300: #6EE7B7;
+  --hd-emerald-400: #34D399;
+  --hd-emerald-500: #10B981;
+  --hd-emerald-600: #059669;
+
+  --hd-danger-500: #EF4444;
+  --hd-danger-600: #DC2626;
+  --hd-danger-700: #B91C1C;
+
+  --hd-warning-500: #F59E0B;
+  --hd-warning-600: #D97706;
+
+  --hd-info-500: #0EA5E9;
+  --hd-info-600: #0284C7;
+
+  --hd-font-sans: 'Nunito', sans-serif;
+  --hd-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --hd-sidebar-width: 192px;
+  --hd-radius-sm: 4px;
+  --hd-radius-md: 6px;
+  --hd-radius-lg: 8px;
+  --hd-radius-xl: 12px;
+  --hd-radius-full: 9999px;
+  --hd-transition: 200ms ease;
+}
+
+/* ── Light theme (défaut) ── */
+[data-theme="light"], :root {
+  --bg-base:      #F5F3FF;
+  --bg-surface:   #FFFFFF;
+  --bg-card:      #FFFFFF;
+  --bg-card-alt:  #F9FAFB;
+  --bg-input:     #FFFFFF;
+  --border:       #DDD6FE;
+  --border-alt:   #C4B5FD;
+  --text-1:       #1E1033;
+  --text-2:       #4C1D95;
+  --text-3:       #6D28D9;
+  --text-muted:   #7C3AED;
+  --scrollbar-bg: #EDE9FE;
+  --scrollbar-th: #C4B5FD;
+  --log-bg:       #1A1240;
+  --log-border:   #2D1B69;
+  --log-ts:       #4C1D95;
+  --log-debug:    #6D4FC7;
+  --log-info:     #C4B5FD;
+  --log-warning:  #F59E0B;
+  --log-error:    #EF4444;
+}
+
+/* ── Dark theme ── */
+[data-theme="dark"] {
+  --bg-base:      #0D0919;
+  --bg-surface:   #160E2E;
+  --bg-card:      #1A1240;
+  --bg-card-alt:  #1F1648;
+  --bg-input:     #130C26;
+  --border:       #2D1B69;
+  --border-alt:   #3D2585;
+  --text-1:       #F5F3FF;
+  --text-2:       #C4B5FD;
+  --text-3:       #A78BFA;
+  --text-muted:   #6D4FC7;
+  --scrollbar-bg: #1A1240;
+  --scrollbar-th: #3D2585;
+  --log-bg:       #0A0614;
+  --log-border:   #2D1B69;
+  --log-ts:       #4C1D95;
+  --log-debug:    #6D4FC7;
+  --log-info:     #C4B5FD;
+  --log-warning:  #F59E0B;
+  --log-error:    #EF4444;
+}
+
+/* ── Base ── */
+body {
+  font-family: var(--hd-font-sans);
+  background: var(--bg-base);
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-th); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-alt); }
