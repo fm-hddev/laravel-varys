@@ -104,9 +104,9 @@ export default function EventsView() {
             aria-live="polite"
             aria-atomic="false"
           >
-            {filtered.map((b, i) => (
+            {filtered.map((b) => (
               <div key={b.id} role="listitem">
-                <BroadcastItem broadcast={b} index={i} />
+                <BroadcastItem broadcast={b} />
               </div>
             ))}
           </div>

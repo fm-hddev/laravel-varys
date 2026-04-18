@@ -3,50 +3,53 @@ import { useState } from 'react';
 
 interface Props {
   broadcast: Broadcast;
-  index: number;
 }
 
 function formatTime(date: Date): string {
   return new Date(date).toLocaleTimeString('fr-FR', { hour12: false });
 }
 
-export function BroadcastItem({ broadcast: b, index }: Props) {
+export function BroadcastItem({ broadcast: b }: Props) {
   const [expanded, setExpanded] = useState(false);
-  const isAlt = index % 2 === 1;
 
   return (
-    <article
-      className={`rounded-lg border border-neutral-800 px-4 py-3 ${isAlt ? 'bg-neutral-900' : 'bg-neutral-950'}`}
-      aria-label={`Événement ${b.event} sur ${b.channel}`}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded bg-indigo-900 px-1.5 py-0.5 text-xs font-medium text-indigo-300">
-              {b.channel}
-            </span>
-            <span className="truncate text-sm font-semibold text-neutral-100">{b.event}</span>
-          </div>
-          <p className="mt-0.5 text-xs text-neutral-500">
-            {formatTime(b.receivedAt)}
-          </p>
-        </div>
+    <div aria-label={`Événement ${b.event} sur ${b.channel}`}>
+      <div
+        className="flex items-center gap-2.5 px-4 py-2.5 transition-colors"
+        style={{ borderBottom: '1px solid var(--border)' }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'var(--bg-card-alt)'; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = ''; }}
+      >
+        <span
+          className="shrink-0 rounded px-1.5 py-0.5 text-xs font-medium"
+          style={{ background: 'var(--hd-violet-900, #4C1D95)', color: 'var(--hd-violet-300)' }}
+        >
+          {b.channel}
+        </span>
+        <span className="min-w-0 flex-1 truncate text-sm font-semibold">{b.event}</span>
+        <span className="shrink-0 font-mono text-xs" style={{ color: 'var(--text-muted, #6B7280)' }}>
+          {formatTime(b.receivedAt)}
+        </span>
         <button
           type="button"
           onClick={() => setExpanded((o) => !o)}
           aria-expanded={expanded}
           aria-label={expanded ? 'Réduire le payload' : 'Voir le payload'}
-          className="shrink-0 rounded px-2 py-1 text-xs text-neutral-400 hover:bg-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+          className="shrink-0 rounded px-2 py-1 text-xs transition-colors"
+          style={{ color: 'var(--hd-violet-400)', border: '1px solid var(--hd-violet-500)' }}
         >
           {expanded ? 'Réduire' : 'Payload'}
         </button>
       </div>
 
       {expanded && (
-        <pre className="mt-2 overflow-x-auto rounded bg-neutral-800 p-2 text-xs text-neutral-300">
-          {JSON.stringify(b.payload, null, 2)}
-        </pre>
+        <div
+          className="overflow-x-auto px-4 py-2.5 font-mono text-xs"
+          style={{ background: 'var(--log-bg)', color: 'var(--log-info)' }}
+        >
+          <pre>{JSON.stringify(b.payload, null, 2)}</pre>
+        </div>
       )}
-    </article>
+    </div>
   );
 }
