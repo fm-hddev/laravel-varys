@@ -3,11 +3,11 @@ import { useProcessStream } from '@/hooks/useProcessStream';
 
 function SkeletonCard() {
   return (
-    <div className="animate-pulse rounded-xl border border-neutral-800 bg-neutral-900 p-4">
+    <div className="animate-pulse rounded-xl p-4" style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
       <div className="flex items-start gap-3">
         <div className="flex-1 space-y-2">
-          <div className="h-4 w-32 rounded bg-neutral-800" />
-          <div className="h-3 w-48 rounded bg-neutral-800" />
+          <div className="h-4 w-32 rounded" style={{ background: 'var(--border)' }} />
+          <div className="h-3 w-48 rounded" style={{ background: 'var(--border)' }} />
         </div>
       </div>
     </div>
@@ -18,10 +18,10 @@ export default function ProcessesView() {
   const { data: processes, isLoading } = useProcessStream();
 
   return (
-    <main className="min-h-screen bg-neutral-950 px-6 py-10">
+    <main className="min-h-screen px-6 py-10" style={{ background: 'var(--bg-base)' }}>
       <div className="mx-auto max-w-2xl">
         <div className="mb-8">
-          <h1 className="text-xl font-bold text-neutral-100">Processus</h1>
+          <h1 className="text-xl font-bold" style={{ color: 'var(--text-1)' }}>Processus</h1>
         </div>
 
         {isLoading && (
@@ -33,8 +33,8 @@ export default function ProcessesView() {
         )}
 
         {!isLoading && (!processes || processes.length === 0) && (
-          <div className="rounded-xl border border-neutral-800 bg-neutral-900 px-6 py-12 text-center">
-            <p className="text-sm text-neutral-400">
+          <div className="rounded-xl px-6 py-12 text-center" style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
+            <p className="text-sm" style={{ color: 'var(--text-3)' }}>
               Aucun processus détecté — assurez-vous que Docker ou des processus Artisan sont en cours d'exécution.
             </p>
           </div>

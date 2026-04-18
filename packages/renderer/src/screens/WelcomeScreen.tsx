@@ -46,11 +46,11 @@ export default function WelcomeScreen() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-neutral-950 px-6 py-12">
+    <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12" style={{ background: 'var(--bg-base)' }}>
       <div className="w-full max-w-md">
         <header className="mb-10 text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-100">Varys</h1>
-          <p className="mt-2 text-sm italic text-neutral-400">
+          <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--text-1)' }}>Varys</h1>
+          <p className="mt-2 text-sm italic" style={{ color: 'var(--text-3)' }}>
             "I have little birds everywhere, even in the North."
           </p>
         </header>
@@ -67,7 +67,7 @@ export default function WelcomeScreen() {
           </button>
 
           {selectedPath && (
-            <p className="truncate text-center text-xs text-neutral-500" title={selectedPath}>
+            <p className="truncate text-center text-xs" style={{ color: 'var(--text-muted)' }} title={selectedPath}>
               {selectedPath}
             </p>
           )}
@@ -80,7 +80,7 @@ export default function WelcomeScreen() {
 
           {report && (
             <div>
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-neutral-500">
+              <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
                 État des adapters
               </h2>
               <HealthReport report={report} />

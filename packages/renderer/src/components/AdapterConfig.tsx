@@ -13,9 +13,10 @@ export function AdapterConfig({ report, onToggle }: Props) {
         return (
           <li
             key={adapter.id}
-            className="flex items-center justify-between gap-3 rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2"
+            className="flex items-center justify-between gap-3 rounded-lg px-3 py-2"
+            style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)' }}
           >
-            <label htmlFor={id} className="text-sm font-medium text-neutral-100 cursor-pointer">
+            <label htmlFor={id} className="text-sm font-medium cursor-pointer" style={{ color: 'var(--text-1)' }}>
               {adapter.name}
             </label>
             <button
@@ -25,9 +26,8 @@ export function AdapterConfig({ report, onToggle }: Props) {
               aria-checked={adapter.result.available}
               aria-label={`${adapter.result.available ? 'Désactiver' : 'Activer'} ${adapter.name}`}
               onClick={() => onToggle(adapter.id, !adapter.result.available)}
-              className={`relative inline-flex h-5 w-9 items-center rounded-full transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
-                adapter.result.available ? 'bg-indigo-600' : 'bg-neutral-700'
-              }`}
+              className="relative inline-flex h-5 w-9 items-center rounded-full transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+              style={{ background: adapter.result.available ? 'var(--hd-violet-600)' : 'var(--border)' }}
             >
               <span
                 className={`inline-block h-3 w-3 transform rounded-full bg-white transition ${

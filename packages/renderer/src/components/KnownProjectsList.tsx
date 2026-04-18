@@ -9,7 +9,7 @@ interface Props {
 
 export function KnownProjectsList({ paths, activePath, onSwitch, onRemove }: Props) {
   if (paths.length === 0) {
-    return <p className="text-sm text-neutral-500">Aucun projet connu.</p>;
+    return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Aucun projet connu.</p>;
   }
 
   return (
@@ -19,16 +19,18 @@ export function KnownProjectsList({ paths, activePath, onSwitch, onRemove }: Pro
         return (
           <li
             key={kp.projectPath}
-            className="flex items-center justify-between gap-3 rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2"
+            className="flex items-center justify-between gap-3 rounded-lg px-3 py-2"
+            style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)' }}
           >
             <div className="min-w-0 flex-1">
               <p
-                className="truncate text-sm font-medium text-neutral-100"
+                className="truncate text-sm font-medium"
+                style={{ color: 'var(--text-1)' }}
                 title={kp.projectPath}
               >
                 {kp.label || kp.projectPath}
               </p>
-              <p className="truncate text-xs text-neutral-500" title={kp.projectPath}>
+              <p className="truncate text-xs" style={{ color: 'var(--text-muted)' }} title={kp.projectPath}>
                 {kp.projectPath}
               </p>
             </div>

@@ -60,19 +60,19 @@ export default function LogsView() {
 
   if (isLoading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-neutral-950">
-        <p className="text-sm text-neutral-400">Chargement des fichiers…</p>
+      <main className="flex min-h-screen items-center justify-center" style={{ background: 'var(--bg-base)' }}>
+        <p className="text-sm" style={{ color: 'var(--text-3)' }}>Chargement des fichiers…</p>
       </main>
     );
   }
 
   if (!files || files.length === 0) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-neutral-950">
+      <main className="flex min-h-screen items-center justify-center" style={{ background: 'var(--bg-base)' }}>
         <div className="text-center">
-          <p className="text-sm font-medium text-neutral-300">Aucun fichier de log trouvé</p>
-          <p className="mt-1 text-xs text-neutral-500">
-            Vérifiez que <code className="text-neutral-400">storage/logs/</code> existe dans votre projet Laravel.
+          <p className="text-sm font-medium" style={{ color: 'var(--text-2)' }}>Aucun fichier de log trouvé</p>
+          <p className="mt-1 text-xs" style={{ color: 'var(--text-muted)' }}>
+            Vérifiez que <code style={{ color: 'var(--text-3)' }}>storage/logs/</code> existe dans votre projet Laravel.
           </p>
         </div>
       </main>
@@ -80,10 +80,10 @@ export default function LogsView() {
   }
 
   return (
-    <main className="flex h-screen flex-col bg-neutral-950 px-6 py-8">
+    <main className="flex h-screen flex-col px-6 py-8" style={{ background: 'var(--bg-base)' }}>
       <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-4 min-h-0">
         <div className="flex items-end gap-4 flex-wrap">
-          <h1 className="text-xl font-bold text-neutral-100">Logs</h1>
+          <h1 className="text-xl font-bold" style={{ color: 'var(--text-1)' }}>Logs</h1>
           {selectedFile !== null && (
             <LogFileSelector
               files={files}
@@ -95,12 +95,13 @@ export default function LogsView() {
 
         {/* Level filters */}
         <fieldset>
-          <legend className="mb-1 text-xs text-neutral-500">Niveaux</legend>
+          <legend className="mb-1 text-xs" style={{ color: 'var(--text-muted)' }}>Niveaux</legend>
           <div className="flex flex-wrap gap-2">
             {ALL_LEVELS.map((level) => (
               <label
                 key={level}
-                className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-neutral-700 bg-neutral-900 px-2 py-1 text-xs"
+                className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2 py-1 text-xs"
+                style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}
               >
                 <input
                   type="checkbox"
@@ -108,7 +109,7 @@ export default function LogsView() {
                   onChange={() => toggleLevel(level)}
                   className="accent-indigo-500"
                 />
-                <span className="text-neutral-300">{level}</span>
+                <span style={{ color: 'var(--text-2)' }}>{level}</span>
               </label>
             ))}
           </div>
@@ -118,13 +119,14 @@ export default function LogsView() {
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto rounded-xl border border-neutral-800 bg-neutral-950 p-4 min-h-0"
+          className="flex-1 overflow-y-auto rounded-xl p-4 min-h-0"
+          style={{ border: '1px solid var(--log-border)', background: 'var(--log-bg)' }}
           aria-label="Logs de l'application"
           aria-live="polite"
           aria-atomic="false"
         >
           {filtered.length === 0 ? (
-            <p className="text-center text-xs text-neutral-600">Aucune ligne à afficher</p>
+            <p className="text-center text-xs" style={{ color: 'var(--log-ts)' }}>Aucune ligne à afficher</p>
           ) : (
             filtered.map((line, i) => <LogLine key={i} line={line} />)
           )}
