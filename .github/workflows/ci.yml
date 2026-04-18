@@ -24,8 +24,12 @@ jobs:
       - name: Build core
         run: npm run build --workspace=packages/core
 
-      - name: Build adapters and packages
-        run: npm run build --workspaces --if-present
+      - name: Build adapters
+        run: |
+          for dir in adapters/*/; do
+            pkg=$(node -p "require('./${dir}package.json').name")
+            npm run build --workspace="$pkg"
+          done
 
       - name: Lint
         run: npm run lint
@@ -37,6 +41,9 @@ jobs:
         run: npm run test --workspaces --if-present
         env:
           TESTCONTAINERS_RYUK_DISABLED: 'true'
+
+      - name: Build renderer
+        run: npm run build --workspace=packages/renderer
 
       - name: Build Electron (Forge)
         run: npm run make --workspace=packages/main
