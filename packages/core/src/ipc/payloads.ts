@@ -1,3 +1,4 @@
+import type { ProjectOverrides } from '../types/context.js';
 import type { Broadcast, FailedJob, HealthReport, KnownPath, LogLine, Process, QueueStats } from '../types/domain.js';
 
 /**
@@ -31,6 +32,25 @@ export interface IpcPayloadMap {
   'project:health': {
     request: void;
     response: HealthReport;
+  };
+  'project:openDialog': {
+    request: void;
+    response: string | null;
+  };
+  'project:updateAdapterConfig': {
+    request: { adapterId: string; enabled: boolean };
+    response: void;
+  };
+  'project:getOverrides': {
+    request: void;
+    response: {
+      overrides: ProjectOverrides;
+      envDefaults: { dbHost: string; dbPort: number; redisHost: string; redisPort: number; reverbHost: string; reverbPort: number; appUrl: string };
+    };
+  };
+  'project:setOverrides': {
+    request: { overrides: ProjectOverrides };
+    response: void;
   };
 
   // ─── Processes ──────────────────────────────────────────────────────────────

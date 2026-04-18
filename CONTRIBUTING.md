@@ -1,5 +1,13 @@
 # Contributing to Varys
 
+## Installation (end users)
+
+1. [Download Varys.dmg](https://github.com/fm-hddev/laravel-varys/releases/latest) from GitHub Releases
+2. Open the DMG and drag **Varys.app** to `/Applications`
+3. On first launch: right-click → **Open** to bypass macOS Gatekeeper
+
+> Varys is not code-signed yet. Gatekeeper will block unsigned apps by default — right-click → Open bypasses this for the first launch only.
+
 ## Development Setup
 
 ```bash
