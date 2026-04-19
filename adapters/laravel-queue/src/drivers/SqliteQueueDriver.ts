@@ -94,6 +94,28 @@ export class SqliteQueueDriver {
     return Promise.resolve();
   }
 
+  forgetFailedJob(id: string | number): Promise<void> {
+    const db = this.getDb();
+    db.prepare('DELETE FROM failed_jobs WHERE id = ?').run(id);
+    return Promise.resolve();
+  }
+
+  retryFailedJob(id: string | number): Promise<void> {
+    const db = this.getDb();
+    const now = Math.floor(Date.now() / 1000);
+    db.prepare(
+      'INSERT INTO jobs (queue, payload, attempts, available_at, created_at) SELECT queue, payload, 0, ?, ? FROM failed_jobs WHERE id = ?',
+    ).run(now, now, id);
+    db.prepare('DELETE FROM failed_jobs WHERE id = ?').run(id);
+    return Promise.resolve();
+  }
+
+  purgeAllFailedJobs(): Promise<void> {
+    const db = this.getDb();
+    db.prepare('DELETE FROM failed_jobs').run();
+    return Promise.resolve();
+  }
+
   destroy(): void {
     this.db?.close();
     this.db = null;

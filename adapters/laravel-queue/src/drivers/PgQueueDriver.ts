@@ -139,6 +139,29 @@ export class PgQueueDriver {
     }
   }
 
+  async forgetFailedJob(id: string | number): Promise<void> {
+    await this.ensureSchema();
+    const pool = this.getPool();
+    await pool.query('DELETE FROM failed_jobs WHERE id = $1', [id]);
+  }
+
+  async retryFailedJob(id: string | number): Promise<void> {
+    await this.ensureSchema();
+    const pool = this.getPool();
+    const now = Math.floor(Date.now() / 1000);
+    await pool.query(
+      'INSERT INTO jobs (queue, payload, attempts, available_at, created_at) SELECT queue, payload, 0, $1, $2 FROM failed_jobs WHERE id = $3',
+      [now, now, id],
+    );
+    await pool.query('DELETE FROM failed_jobs WHERE id = $1', [id]);
+  }
+
+  async purgeAllFailedJobs(): Promise<void> {
+    await this.ensureSchema();
+    const pool = this.getPool();
+    await pool.query('DELETE FROM failed_jobs');
+  }
+
   async destroy(): Promise<void> {
     await this.pool?.end();
     this.pool = null;

@@ -62,6 +62,18 @@ export class RedisQueueDriver {
     return counts;
   }
 
+  forgetFailedJob(_id: string | number): Promise<void> {
+    return Promise.reject(new Error('forgetFailedJob is not supported for the Redis driver'));
+  }
+
+  retryFailedJob(_id: string | number): Promise<void> {
+    return Promise.reject(new Error('retryFailedJob is not supported for the Redis driver'));
+  }
+
+  purgeAllFailedJobs(): Promise<void> {
+    return Promise.reject(new Error('purgeAllFailedJobs is not supported for the Redis driver'));
+  }
+
   destroy(): void {
     this.client?.disconnect();
     this.client = null;
