@@ -54,3 +54,10 @@ coverage/
 .cache/
 .temp/
 tmp/
+
+# Claude / tooling artifacts
+.claude/
+.playwright-mcp/
+
+# Vite dev cache
+packages/renderer/.vite/

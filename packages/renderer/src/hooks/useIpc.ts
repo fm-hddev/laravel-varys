@@ -24,5 +24,8 @@ export function useIpc() {
       window.varys.invoke('stream:unsubscribe', payload),
     onProcessLog: (listener: (line: IpcPayloadMap['stream:processLog']['response']) => void) =>
       window.varys.on('stream:processLog', listener),
+    getOverrides: () => window.varys.invoke('project:getOverrides'),
+    setOverrides: (overrides: Record<string, unknown>) =>
+      window.varys.invoke('project:setOverrides', { overrides }),
   };
 }

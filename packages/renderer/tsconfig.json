@@ -4,6 +4,7 @@
     "noUncheckedIndexedAccess": true,
     "target": "ESNext",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
