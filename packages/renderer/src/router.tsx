@@ -9,8 +9,9 @@ const WelcomeScreen = lazy(() => import('@/screens/WelcomeScreen'));
 const SettingsScreen = lazy(() => import('@/screens/SettingsScreen'));
 const ProcessesView = lazy(() => import('@/screens/ProcessesView'));
 const EventsView = lazy(() => import('@/screens/EventsView'));
-const QueuesView = lazy(() => import('@/screens/QueuesView'));
-const LogsView = lazy(() => import('@/screens/LogsView'));
+const QueuesView      = lazy(() => import('@/screens/QueuesView'));
+const FailedJobDetail = lazy(() => import('@/screens/FailedJobDetail'));
+const LogsView        = lazy(() => import('@/screens/LogsView'));
 
 function RootRedirect() {
   const activePath = useProjectStore((s) => s.activePath);
@@ -78,6 +79,14 @@ export const router = createMemoryRouter([
         element: (
           <Suspense fallback={<Loading />}>
             <QueuesView />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/queues/failed',
+        element: (
+          <Suspense fallback={<Loading />}>
+            <FailedJobDetail />
           </Suspense>
         ),
       },
