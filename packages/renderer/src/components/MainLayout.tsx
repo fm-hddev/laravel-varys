@@ -10,7 +10,7 @@ export function MainLayout() {
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <UpdateBanner />
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-hidden">
           <ErrorBoundary>
             <Outlet />
           </ErrorBoundary>

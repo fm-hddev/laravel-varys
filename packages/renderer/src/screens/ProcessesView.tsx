@@ -1,53 +1,90 @@
 import { ProcessCard } from '@/components/ProcessCard';
 import { useProcessStream } from '@/hooks/useProcessStream';
 
-function SkeletonCard() {
-  return (
-    <div className="animate-pulse rounded-xl p-4" style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
-      <div className="flex items-start gap-3">
-        <div className="flex-1 space-y-2">
-          <div className="h-4 w-32 rounded" style={{ background: 'var(--border)' }} />
-          <div className="h-3 w-48 rounded" style={{ background: 'var(--border)' }} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function ProcessesView() {
   const { data: processes, isLoading } = useProcessStream();
 
+  const online = processes?.filter((p) => p.status === 'up').length ?? 0;
+  const offline = processes?.filter((p) => p.status !== 'up').length ?? 0;
+
   return (
-    <main className="min-h-screen px-6 py-10" style={{ background: 'var(--bg-base)' }}>
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-xl font-bold" style={{ color: 'var(--text-1)' }}>Processus</h1>
-        </div>
+    <div className="flex h-full flex-col" style={{ background: 'var(--bg-base)' }}>
+
+      {/* Page header */}
+      <div
+        className="flex shrink-0 items-center gap-3 px-6 py-4"
+        style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' }}
+      >
+        <h1
+          className="text-[17px] font-bold"
+          style={{ color: 'var(--text-1)', letterSpacing: '-0.02em' }}
+        >
+          Processus
+        </h1>
+        {processes && online > 0 && (
+          <span
+            className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
+            style={{
+              background: 'rgba(16,185,129,0.12)',
+              color: 'var(--hd-emerald-400)',
+              border: '1px solid rgba(16,185,129,0.25)',
+            }}
+          >
+            {online} en ligne
+          </span>
+        )}
+        {processes && offline > 0 && (
+          <span
+            className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
+            style={{
+              background: 'rgba(239,68,68,0.12)',
+              color: 'var(--hd-danger-500)',
+              border: '1px solid rgba(239,68,68,0.25)',
+            }}
+          >
+            {offline} hors ligne
+          </span>
+        )}
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 overflow-y-auto p-4">
 
         {isLoading && (
-          <div className="flex flex-col gap-4">
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="animate-pulse rounded-xl"
+                style={{ height: 96, border: '1px solid var(--border)', background: 'var(--bg-card)' }}
+              />
+            ))}
           </div>
         )}
 
         {!isLoading && (!processes || processes.length === 0) && (
-          <div className="rounded-xl px-6 py-12 text-center" style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
-            <p className="text-sm" style={{ color: 'var(--text-3)' }}>
-              Aucun processus détecté — assurez-vous que Docker ou des processus Artisan sont en cours d'exécution.
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <p className="text-sm font-medium" style={{ color: 'var(--text-2)' }}>
+              Aucun processus détecté
+            </p>
+            <p className="mt-1 text-xs" style={{ color: 'var(--text-muted)' }}>
+              Assurez-vous que Docker ou des processus Artisan sont en cours d'exécution.
             </p>
           </div>
         )}
 
         {processes && processes.length > 0 && (
-          <div className="flex flex-col gap-4">
+          <div
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}
+            aria-label="Liste des processus"
+          >
             {processes.map((proc) => (
               <ProcessCard key={proc.id} process={proc} />
             ))}
           </div>
         )}
+
       </div>
-    </main>
+    </div>
   );
 }

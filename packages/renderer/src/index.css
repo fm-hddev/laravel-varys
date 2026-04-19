@@ -104,3 +104,29 @@ body {
 ::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
 ::-webkit-scrollbar-thumb { background: var(--scrollbar-th); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-alt); }
+
+/* ── Status dot pulse animation ── */
+@keyframes pulse-green {
+  0%   { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5); }
+  70%  { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+.status-dot-pulse { animation: pulse-green 2s infinite; }
+
+/* ── Live dot indicator ── */
+.live-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--hd-emerald-400);
+  font-family: var(--hd-font-mono);
+}
+.live-dot::before {
+  content: '';
+  width: 7px; height: 7px;
+  background: var(--hd-emerald-400);
+  border-radius: 50%;
+  animation: pulse-green 2s infinite;
+}

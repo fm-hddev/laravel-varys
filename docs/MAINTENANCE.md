@@ -22,6 +22,20 @@ Référence opérationnelle pour toute modification du projet. À lire avant de 
 3. Exposer les données nécessaires via IPC : déclarer le handler dans `packages/main/src/` et le bridge dans `packages/main/src/preload.ts`.
 4. Typer le contrat IPC dans `packages/core/src/` si partagé.
 
+### Nouveau canal IPC
+
+Le preload utilise un whitelist automatique — **pas besoin de modifier `packages/main/src/preload.ts`**.
+
+1. Ajouter la clé dans `packages/core/src/ipc/channels.ts` (format `namespace:action`, minuscules).
+2. Ajouter l'entrée correspondante dans `IpcPayloadMap` (`packages/core/src/ipc/payloads.ts`) avec les types `request` et `response`.
+3. Si le type `response` est un type partagé, le déclarer dans `packages/core/src/types/domain.ts` et l'exporter dans `packages/core/src/index.ts`.
+4. Côté main : `ipcMain.handle(IPC_CHANNELS.MA_CLE, ...)` dans `packages/main/src/ipc/handlers.ts`, ou `pushToRenderer(IPC_CHANNELS.MA_CLE, payload)` pour les canaux push.
+5. Côté renderer : `window.varys.invoke('namespace:action', payload)` ou `window.varys.on('namespace:action', listener)`.
+6. Mettre à jour le mock dev (`packages/renderer/src/mocks/varys.browser.ts`) pour les canaux `invoke`.
+7. Mettre à jour le compteur et les assertions dans `packages/core/src/__tests__/ipc.test.ts`.
+
+**Canaux push (main → renderer)** : utiliser `pushToRenderer` depuis `packages/main/src/ipc/streamBridge.ts`. S'assurer que l'envoi a lieu après `win.once('ready-to-show', ...)` pour que `webContents` soit prêt.
+
 ### Nouveau package workspace
 
 1. Créer le dossier sous `packages/<nom>/` ou `adapters/<nom>/`.
@@ -103,7 +117,23 @@ docs: add MAINTENANCE protocol
 
 ---
 
-## 5. Processus de mise à jour (release)
+## 5. Update checker
+
+L'application vérifie au démarrage si une nouvelle version est disponible via l'API GitHub Releases (`fm-hddev/laravel-varys`). La vérification est non-bloquante et silent-fail (offline, rate-limit).
+
+**Fichiers concernés** :
+- Service : `packages/main/src/services/update-checker.ts`
+- Déclenchement : `packages/main/src/index.ts` — dans `win.once('ready-to-show', ...)`
+- Canaux IPC : `updater:updateAvailable` (push), `updater:openRelease` (invoke)
+- UI : `packages/renderer/src/components/UpdateBanner.tsx` + hook `useUpdateCheck`
+
+**Pour changer le repo GitHub cible** : modifier `GITHUB_REPO` dans `packages/main/src/services/update-checker.ts`.
+
+**Format de tag attendu** : `vX.Y.Z` (le `v` est strippé avant comparaison semver). S'assurer que les releases GitHub utilisent ce format.
+
+---
+
+## 6. Processus de mise à jour (release)
 
 ### Pré-release / RC
 
@@ -143,13 +173,14 @@ npm outdated
 npm update <package> --workspace=packages/<nom>
 
 # Après toute mise à jour de dépendance : relancer la checklist complète (§4)
+
 ```
 
 > Attention : `electron` et `vite` ont des contraintes de compatibilité croisée avec `@electron-forge/plugin-vite`. Tester un upgrade majeur sur une branche dédiée.
 
 ---
 
-## 6. Décisions d'architecture (ADRs)
+## 7. Décisions d'architecture (ADRs)
 
 Créer un ADR dans `docs/adr/` quand :
 - On change la structure de communication IPC
