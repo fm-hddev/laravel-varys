@@ -78,6 +78,18 @@ export interface IpcPayloadMap {
     request: void;
     response: FailedJob[];
   };
+  'queues:retryJob': {
+    request: { id: string | number };
+    response: void;
+  };
+  'queues:forgetJob': {
+    request: { id: string | number };
+    response: void;
+  };
+  'queues:purgeAll': {
+    request: void;
+    response: void;
+  };
 
   // ─── Logs ───────────────────────────────────────────────────────────────────
   'logs:listFiles': {
