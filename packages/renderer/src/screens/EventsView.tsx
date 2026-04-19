@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { BroadcastItem } from '@/components/BroadcastItem';
 import { LogPanel } from '@/components/LogPanel';
 import { ViewTabs } from '@/components/ViewTabs';
-import { useEventsStream } from '@/hooks/useEventsStream';
+import { clearSeenIds, useEventsStream } from '@/hooks/useEventsStream';
 import { useLogStream } from '@/hooks/useLogStream';
 import { useProcessStream } from '@/hooks/useProcessStream';
 import { useEventsStore } from '@/store/useEventsStore';
@@ -41,6 +41,8 @@ export default function EventsView() {
 
   function handleClearAll() {
     clearAll();
+    clearSeenIds();
+    void window.varys.invoke('events:resetStream');
     setChannelFilter('');
     setEventFilter('');
   }

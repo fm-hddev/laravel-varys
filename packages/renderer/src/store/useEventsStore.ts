@@ -21,15 +21,23 @@ export const useEventsStore = create<EventsState>((set) => ({
   addBroadcasts: (bs) =>
     set((state) => {
       if (state.paused) {
-        return { pending: [...bs, ...state.pending].slice(0, MAX_BUFFER) };
+        const existingIds = new Set(state.pending.map((b) => b.id));
+        const fresh = bs.filter((b) => !existingIds.has(b.id));
+        return { pending: [...fresh, ...state.pending].slice(0, MAX_BUFFER) };
       }
-      return { broadcasts: [...bs, ...state.broadcasts].slice(0, MAX_DISPLAY) };
+      const existingIds = new Set(state.broadcasts.map((b) => b.id));
+      const fresh = bs.filter((b) => !existingIds.has(b.id));
+      if (fresh.length === 0) return state;
+      const merged = [...fresh, ...state.broadcasts].slice(0, MAX_DISPLAY);
+      merged.sort((a, b) => new Date(b.receivedAt).getTime() - new Date(a.receivedAt).getTime());
+      return { broadcasts: merged };
     }),
   setPaused: (paused) => set({ paused }),
   flushPending: () =>
-    set((state) => ({
-      broadcasts: [...state.pending, ...state.broadcasts].slice(0, MAX_DISPLAY),
-      pending: [],
-    })),
+    set((state) => {
+      const merged = [...state.pending, ...state.broadcasts].slice(0, MAX_DISPLAY);
+      merged.sort((a, b) => new Date(b.receivedAt).getTime() - new Date(a.receivedAt).getTime());
+      return { broadcasts: merged, pending: [] };
+    }),
   clearAll: () => set({ broadcasts: [], pending: [] }),
 }));

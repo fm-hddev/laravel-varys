@@ -91,12 +91,11 @@ export function setupIpcHandlers(appCtx: AppContext): void {
     appCtx.activePath = arg.path;
     newSession();
 
-    // Ensure a DotenvAdapter exists for this path (handles first-launch case)
-    if (appCtx.dotenvAdapter === null) {
-      const dotenv = new DotenvAdapter(path.join(arg.path, '.env'));
-      registry.register(dotenv);
-      appCtx.dotenvAdapter = dotenv;
-    }
+    // Always create a new DotenvAdapter for the new project path so the
+    // correct .env is read (not the previous project's file).
+    const dotenv = new DotenvAdapter(path.join(arg.path, '.env'));
+    registry.register(dotenv);
+    appCtx.dotenvAdapter = dotenv;
 
     try {
       const ctx = await appCtx.dotenvAdapter.buildContext(arg.path);
