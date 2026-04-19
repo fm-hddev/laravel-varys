@@ -10,10 +10,12 @@
 **Varys** is a macOS desktop app that gives Laravel developers a real-time view of their local stack: processes, Reverb broadcast events, queues, and logs — in a single window, without modifying the Laravel app.
 
 <!-- GIF demo coming soon -->
-<!-- assets/screenshots/processes.png -->
-<!-- assets/screenshots/events.png -->
-<!-- assets/screenshots/queues.png -->
-<!-- assets/screenshots/logs.png -->
+![Processes](assets/screenshots/processes.png)
+![Events](assets/screenshots/events.png)
+![Queues](assets/screenshots/queues.png)
+![Failed Job](assets/screenshots/failed_job.png)
+![Logs](assets/screenshots/logs.png)
+
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "name": "@varys/main",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "type": "commonjs",
   "main": ".vite/build/index.js",
