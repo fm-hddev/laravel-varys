@@ -135,7 +135,7 @@ export default function WelcomeScreen() {
                     disabled={step === 'validating'}
                     onClick={() => { void handleOpenKnown(kp.projectPath); }}
                     className="shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:cursor-not-allowed disabled:opacity-50"
-                    style={{ background: isActive ? 'var(--hd-violet-700)' : 'var(--bg-card)', color: isActive ? '#fff' : 'var(--text-2)', border: isActive ? 'none' : '1px solid var(--border)' }}
+                    style={{ background: isActive ? 'var(--hd-violet-600)' : 'var(--bg-card)', color: isActive ? '#fff' : 'var(--text-2)', border: isActive ? 'none' : '1px solid var(--border)' }}
                   >
                     {step === 'validating' ? '…' : 'Ouvrir'}
                   </button>

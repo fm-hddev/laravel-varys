@@ -22,7 +22,7 @@ export function BroadcastItem({ broadcast: b }: Props) {
       >
         <span
           className="shrink-0 rounded px-1.5 py-0.5 text-xs font-medium"
-          style={{ background: 'var(--hd-violet-900, #4C1D95)', color: 'var(--hd-violet-300)' }}
+          style={{ background: 'rgba(109,40,217,0.15)', color: 'var(--text-3)', border: '1px solid rgba(109,40,217,0.3)' }}
         >
           {b.channel}
         </span>
