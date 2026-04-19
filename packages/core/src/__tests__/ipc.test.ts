@@ -25,11 +25,13 @@ describe('IPC_CHANNELS', () => {
     expect(IPC_CHANNELS.STREAM_APP_LOG).toBe('stream:appLog');
     expect(IPC_CHANNELS.STREAM_SUBSCRIBE).toBe('stream:subscribe');
     expect(IPC_CHANNELS.STREAM_UNSUBSCRIBE).toBe('stream:unsubscribe');
+    expect(IPC_CHANNELS.UPDATER_UPDATE_AVAILABLE).toBe('updater:updateAvailable');
+    expect(IPC_CHANNELS.UPDATER_OPEN_RELEASE).toBe('updater:openRelease');
   });
 
-  it('has exactly 19 channels', () => {
+  it('has exactly 24 channels', () => {
     const channelValues = Object.values(IPC_CHANNELS);
-    expect(channelValues).toHaveLength(19);
+    expect(channelValues).toHaveLength(24);
   });
 
   it('has no duplicate channel strings', () => {
@@ -62,12 +64,12 @@ describe('IpcChannel type', () => {
 });
 
 describe('IpcPayloadMap coverage', () => {
-  it('covers all 19 channels', () => {
+  it('covers all 24 channels', () => {
     // IpcPayloadMap is a type, not a runtime object.
     // Coverage is enforced at compile time: TypeScript will error if a channel
     // is missing from IpcPayloadMap when IpcRequest<C> or IpcResponse<C> is used.
     const allChannels = Object.values(IPC_CHANNELS) as IpcChannel[];
-    expect(allChannels).toHaveLength(19);
+    expect(allChannels).toHaveLength(24);
   });
 });
 

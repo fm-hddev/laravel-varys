@@ -21,6 +21,8 @@ export const IPC_CHANNELS = {
   STREAM_APP_LOG: 'stream:appLog',
   STREAM_SUBSCRIBE: 'stream:subscribe',
   STREAM_UNSUBSCRIBE: 'stream:unsubscribe',
+  UPDATER_UPDATE_AVAILABLE: 'updater:updateAvailable',
+  UPDATER_OPEN_RELEASE: 'updater:openRelease',
 } as const;
 
 export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];

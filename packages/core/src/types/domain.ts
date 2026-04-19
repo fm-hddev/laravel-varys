@@ -50,3 +50,10 @@ export interface KnownPath {
   projectPath: string;
   lastUsedAt: Date;
 }
+
+export interface UpdateInfo {
+  available: boolean;
+  latestVersion: string;
+  currentVersion: string;
+  releaseUrl: string;
+}

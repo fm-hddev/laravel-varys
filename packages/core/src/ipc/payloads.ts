@@ -1,5 +1,5 @@
 import type { ProjectOverrides } from '../types/context.js';
-import type { Broadcast, FailedJob, HealthReport, KnownPath, LogLine, Process, QueueStats } from '../types/domain.js';
+import type { Broadcast, FailedJob, HealthReport, KnownPath, LogLine, Process, QueueStats, UpdateInfo } from '../types/domain.js';
 
 /**
  * Type map associating each IPC channel string to its request and response types.
@@ -95,6 +95,16 @@ export interface IpcPayloadMap {
   'logs:listFiles': {
     request: void;
     response: string[];
+  };
+
+  // ─── Updater (push from main → renderer, then invoke to open browser) ────────
+  'updater:updateAvailable': {
+    request: void;
+    response: UpdateInfo; // pushed event payload
+  };
+  'updater:openRelease': {
+    request: { url: string };
+    response: void;
   };
 
   // ─── Streaming (push from main → renderer via webContents.send) ─────────────
