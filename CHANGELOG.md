@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Entries are managed automatically by [Changesets](https://github.com/changesets/changesets).
 
+## [1.0.1] — 2026-04-20
+
+### Fixed
+
+- **Crash on launch** — `fsevents.node` was resolved to an absolute CI runner path at build time and baked into the bundle, causing "Cannot find module" on any other machine. `fsevents` is now stubbed (chokidar falls back to its pure-JS polling watcher).
+
+---
+
 ## [1.0.0] — 2026-04-19
 
 ### Added
@@ -28,7 +36,7 @@ Entries are managed automatically by [Changesets](https://github.com/changesets/
 
 ---
 
-## [1.0.0-rc.1] — 2026-04-17
+## [1.0.0-rc.1] — 2026-04-19
 
 ### Added
 
