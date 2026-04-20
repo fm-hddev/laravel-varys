@@ -8,7 +8,7 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc",
     "dev": "electron-forge start",
-    "make": "electron-forge make",
+    "make": "npm run build --workspace=@varys/renderer && electron-forge make",
     "package": "electron-forge package",
     "test": "vitest run"
   },

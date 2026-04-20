@@ -2,6 +2,10 @@ import path from 'node:path';
 
 import { BrowserWindow } from 'electron';
 
+// Injected by @electron-forge/plugin-vite during dev (electron-forge start).
+// Undefined in production builds.
+declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string | undefined;
+
 export function createWindow(): BrowserWindow {
   const win = new BrowserWindow({
     width: 1280,
@@ -15,13 +19,12 @@ export function createWindow(): BrowserWindow {
     },
   });
 
-  const devUrl = process.env['ELECTRON_RENDERER_URL'] ?? 'http://localhost:5173';
-  const isProd = process.env['NODE_ENV'] === 'production';
-
-  if (isProd) {
-    void win.loadFile(path.join(__dirname, '..', 'renderer', 'index.html'));
+  if (typeof MAIN_WINDOW_VITE_DEV_SERVER_URL !== 'undefined' && MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    void win.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
-    void win.loadURL(devUrl);
+    // Production: renderer is at .vite/renderer/main_window/index.html
+    // __dirname = .vite/build/ → go up one level to .vite/
+    void win.loadFile(path.join(__dirname, '..', 'renderer', 'main_window', 'index.html'));
   }
 
   return win;
