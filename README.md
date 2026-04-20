@@ -16,7 +16,6 @@
 ![Failed Job](assets/screenshots/failed_job.png)
 ![Logs](assets/screenshots/logs.png)
 
-
 ---
 
 ## Features
@@ -36,7 +35,12 @@
 2. Open the DMG and drag **Varys.app** to `/Applications`
 3. Launch Varys → select your Laravel project folder
 
-> **Gatekeeper note**: Varys is not code-signed yet. On first launch, right-click → **Open** to bypass the unsigned app warning.
+> **Gatekeeper note**: Varys is not code-signed yet.
+> - If macOS says the app is **"damaged"**, run in Terminal then open normally:
+>   ```bash
+>   xattr -cr /Applications/Varys.app
+>   ```
+> - If macOS says **"unidentified developer"**, right-click → **Open** is enough.
 
 ---
 
