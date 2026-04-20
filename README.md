@@ -64,16 +64,6 @@
 
 ---
 
-## Optional: `varys/laravel-agent`
-
-```bash
-composer require varys/laravel-agent --dev
-```
-
-Unlocks enriched features: job retry from the UI, routes snapshot, detailed healthcheck endpoint.
-
----
-
 ## Architecture
 
 ```
@@ -90,7 +80,7 @@ adapters/
   log-file/         — log file tailing (chokidar)
   laravel-queue/    — queue stats (MySQL/PG/SQLite/Redis)
   reverb-redis/     — Reverb broadcast capture via Redis SUBSCRIBE
-  varys-agent/      — optional HTTP agent for enriched data
+  varys-agent/      — HTTP adapter for future enriched data (not yet published)
 ```
 
 Each data source is behind a `DataSourceAdapter` interface — fully independent, testable, and opt-in.
