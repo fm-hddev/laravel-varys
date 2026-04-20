@@ -87,6 +87,7 @@ const handlers: Record<string, (...args: unknown[]) => Promise<unknown>> = {
       },
     }),
   'project:setOverrides': () => Promise.resolve(undefined),
+  'updater:openRelease': () => Promise.resolve(undefined),
 };
 
 export function installBrowserMock() {

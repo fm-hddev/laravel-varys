@@ -131,6 +131,26 @@ export class MysqlQueueDriver {
     }
   }
 
+  async forgetFailedJob(id: string | number): Promise<void> {
+    await this.ensureSchema();
+    await this.getPool().execute('DELETE FROM failed_jobs WHERE id = ?', [id]);
+  }
+
+  async retryFailedJob(id: string | number): Promise<void> {
+    await this.ensureSchema();
+    const now = Math.floor(Date.now() / 1000);
+    await this.getPool().execute(
+      'INSERT INTO jobs (queue, payload, attempts, available_at, created_at) SELECT queue, payload, 0, ?, ? FROM failed_jobs WHERE id = ?',
+      [now, now, id],
+    );
+    await this.getPool().execute('DELETE FROM failed_jobs WHERE id = ?', [id]);
+  }
+
+  async purgeAllFailedJobs(): Promise<void> {
+    await this.ensureSchema();
+    await this.getPool().execute('DELETE FROM failed_jobs');
+  }
+
   async destroy(): Promise<void> {
     await this.pool?.end();
     this.pool = null;

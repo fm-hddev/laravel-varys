@@ -1,1 +1,132 @@
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 @import "tailwindcss";
+
+/* ── HDDEV Design Tokens ── */
+:root {
+  --hd-violet-50:  #F5F3FF;
+  --hd-violet-100: #EDE9FE;
+  --hd-violet-200: #DDD6FE;
+  --hd-violet-300: #C4B5FD;
+  --hd-violet-400: #A78BFA;
+  --hd-violet-500: #8B5CF6;
+  --hd-violet-600: #7C3AED;
+  --hd-violet-700: #6D28D9;
+  --hd-violet-800: #5B21B6;
+  --hd-violet-900: #4C1D95;
+
+  --hd-emerald-300: #6EE7B7;
+  --hd-emerald-400: #34D399;
+  --hd-emerald-500: #10B981;
+  --hd-emerald-600: #059669;
+
+  --hd-danger-500: #EF4444;
+  --hd-danger-600: #DC2626;
+  --hd-danger-700: #B91C1C;
+
+  --hd-warning-500: #F59E0B;
+  --hd-warning-600: #D97706;
+
+  --hd-info-500: #0EA5E9;
+  --hd-info-600: #0284C7;
+
+  --hd-font-sans: 'Nunito', sans-serif;
+  --hd-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --hd-sidebar-width: 192px;
+  --hd-radius-sm: 4px;
+  --hd-radius-md: 6px;
+  --hd-radius-lg: 8px;
+  --hd-radius-xl: 12px;
+  --hd-radius-full: 9999px;
+  --hd-transition: 200ms ease;
+}
+
+/* ── Light theme (défaut) ── */
+[data-theme="light"], :root {
+  --bg-base:      #F5F3FF;
+  --bg-surface:   #FFFFFF;
+  --bg-card:      #FFFFFF;
+  --bg-card-alt:  #F9FAFB;
+  --bg-input:     #FFFFFF;
+  --border:       #DDD6FE;
+  --border-alt:   #C4B5FD;
+  --text-1:       #1E1033;
+  --text-2:       #6D28D9;
+  --text-3:       #7C3AED;
+  --text-muted:   #8B5CF6;
+  --scrollbar-bg: #EDE9FE;
+  --scrollbar-th: #C4B5FD;
+  --log-bg:       #2D1B69;
+  --log-border:   #3B2280;
+  --log-ts:       #8B5CF6;
+  --log-debug:    #9474F5;
+  --log-info:     #DDD6FE;
+  --log-warning:  #F59E0B;
+  --log-error:    #EF4444;
+}
+
+/* ── Dark theme ── */
+[data-theme="dark"] {
+  --bg-base:      #130A28;
+  --bg-surface:   #1A1040;
+  --bg-card:      #201355;
+  --bg-card-alt:  #261C5A;
+  --bg-input:     #160E35;
+  --border:       #3B2280;
+  --border-alt:   #4C2D9A;
+  --text-1:       #F5F3FF;
+  --text-2:       #C4B5FD;
+  --text-3:       #A78BFA;
+  --text-muted:   #9474F5;
+  --scrollbar-bg: #201355;
+  --scrollbar-th: #4C2D9A;
+  --log-bg:       #0A0614;
+  --log-border:   #3B2280;
+  --log-ts:       #7C3AED;
+  --log-debug:    #9474F5;
+  --log-info:     #C4B5FD;
+  --log-warning:  #F59E0B;
+  --log-error:    #EF4444;
+}
+
+/* ── Base ── */
+body {
+  font-family: var(--hd-font-sans);
+  background: var(--bg-base);
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-th); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-alt); }
+
+/* ── Status dot pulse animation ── */
+@keyframes pulse-green {
+  0%   { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5); }
+  70%  { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+.status-dot-pulse { animation: pulse-green 2s infinite; }
+
+/* ── Live dot indicator ── */
+.live-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--hd-emerald-400);
+  font-family: var(--hd-font-mono);
+}
+.live-dot::before {
+  content: '';
+  width: 7px; height: 7px;
+  background: var(--hd-emerald-400);
+  border-radius: 50%;
+  animation: pulse-green 2s infinite;
+}

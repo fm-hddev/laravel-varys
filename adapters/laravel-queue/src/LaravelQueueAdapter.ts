@@ -124,6 +124,24 @@ export class LaravelQueueAdapter implements DataSourceAdapter {
     });
   }
 
+  async forgetFailedJob(id: string | number): Promise<void> {
+    const driver = this.getDriver();
+    if (driver instanceof RedisQueueDriver) throw new Error('Not supported for Redis driver');
+    return driver.forgetFailedJob(id);
+  }
+
+  async retryFailedJob(id: string | number): Promise<void> {
+    const driver = this.getDriver();
+    if (driver instanceof RedisQueueDriver) throw new Error('Not supported for Redis driver');
+    return driver.retryFailedJob(id);
+  }
+
+  async purgeAllFailedJobs(): Promise<void> {
+    const driver = this.getDriver();
+    if (driver instanceof RedisQueueDriver) throw new Error('Not supported for Redis driver');
+    return driver.purgeAllFailedJobs();
+  }
+
   async destroy(): Promise<void> {
     if (!this.driver) return;
     if (this.driver instanceof SqliteQueueDriver) {

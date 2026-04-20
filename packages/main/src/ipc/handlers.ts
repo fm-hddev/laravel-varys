@@ -1,6 +1,7 @@
 import path from 'node:path';
 
 import { DotenvAdapter } from '@varys/adapter-dotenv';
+import type { LaravelQueueAdapter } from '@varys/adapter-laravel-queue';
 import type { LogFileAdapter } from '@varys/adapter-log-file';
 import type { ReverbRedisAdapter } from '@varys/adapter-reverb-redis';
 import { IPC_CHANNELS } from '@varys/core';
@@ -91,12 +92,11 @@ export function setupIpcHandlers(appCtx: AppContext): void {
     appCtx.activePath = arg.path;
     newSession();
 
-    // Ensure a DotenvAdapter exists for this path (handles first-launch case)
-    if (appCtx.dotenvAdapter === null) {
-      const dotenv = new DotenvAdapter(path.join(arg.path, '.env'));
-      registry.register(dotenv);
-      appCtx.dotenvAdapter = dotenv;
-    }
+    // Always create a new DotenvAdapter for the new project path so the
+    // correct .env is read (not the previous project's file).
+    const dotenv = new DotenvAdapter(path.join(arg.path, '.env'));
+    registry.register(dotenv);
+    appCtx.dotenvAdapter = dotenv;
 
     try {
       const ctx = await appCtx.dotenvAdapter.buildContext(arg.path);
@@ -208,6 +208,27 @@ export function setupIpcHandlers(appCtx: AppContext): void {
     const queueAdapter = registry.getById('laravel-queue');
     if (!queueAdapter) return [];
     return queueAdapter.listFailedJobs();
+  });
+
+  // queues:retryJob
+  ipcMain.handle(IPC_CHANNELS.QUEUES_RETRY_JOB, async (_e, arg: { id: string | number }) => {
+    const queueAdapter = registry.getById('laravel-queue') as LaravelQueueAdapter | undefined;
+    if (!queueAdapter) return;
+    await queueAdapter.retryFailedJob(arg.id);
+  });
+
+  // queues:forgetJob
+  ipcMain.handle(IPC_CHANNELS.QUEUES_FORGET_JOB, async (_e, arg: { id: string | number }) => {
+    const queueAdapter = registry.getById('laravel-queue') as LaravelQueueAdapter | undefined;
+    if (!queueAdapter) return;
+    await queueAdapter.forgetFailedJob(arg.id);
+  });
+
+  // queues:purgeAll
+  ipcMain.handle(IPC_CHANNELS.QUEUES_PURGE_ALL, async () => {
+    const queueAdapter = registry.getById('laravel-queue') as LaravelQueueAdapter | undefined;
+    if (!queueAdapter) return;
+    await queueAdapter.purgeAllFailedJobs();
   });
 
   // logs:listFiles

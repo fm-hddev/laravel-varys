@@ -1,12 +1,18 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import { useEventsStore } from '@/store/useEventsStore';
 
 const POLL_INTERVAL_MS = 2000;
 
+// Module-level : survit aux remontages du composant
+const seenIds = new Set<string>();
+
+export function clearSeenIds() {
+  seenIds.clear();
+}
+
 export function useEventsStream() {
   const addBroadcasts = useEventsStore((s) => s.addBroadcasts);
-  const seenIds = useRef(new Set<string>());
 
   useEffect(() => {
     let cancelled = false;
@@ -15,9 +21,9 @@ export function useEventsStream() {
       try {
         const broadcasts = await window.varys.invoke('events:broadcast');
         if (cancelled) return;
-        const newOnes = broadcasts.filter((b) => !seenIds.current.has(b.id));
+        const newOnes = broadcasts.filter((b) => !seenIds.has(b.id));
         if (newOnes.length > 0) {
-          newOnes.forEach((b) => seenIds.current.add(b.id));
+          newOnes.forEach((b) => seenIds.add(b.id));
           addBroadcasts(newOnes);
         }
       } catch {

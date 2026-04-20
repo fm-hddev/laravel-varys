@@ -8,12 +8,15 @@ import { LogFileAdapter } from '@varys/adapter-log-file';
 import { ReverbRedisAdapter } from '@varys/adapter-reverb-redis';
 import { ViteProcessAdapter } from '@varys/adapter-vite-process';
 import type { ProjectContext } from '@varys/core';
-import { app } from 'electron';
+import { IPC_CHANNELS } from '@varys/core';
+import { app, ipcMain, shell } from 'electron';
 
 import { AdapterRegistry } from './adapters/AdapterRegistry';
 import { ConfigStore } from './config/ConfigStore';
 import type { AppContext } from './ipc/handlers';
 import { applyOverrides, setupIpcHandlers } from './ipc/handlers';
+import { pushToRenderer } from './ipc/streamBridge';
+import { checkForUpdate } from './services/update-checker';
 import { createWindow } from './window';
 
 const t0 = performance.now();
@@ -124,12 +127,22 @@ app.whenReady().then(() => {
 
   setupIpcHandlers(appCtx);
 
+  ipcMain.handle(IPC_CHANNELS.UPDATER_OPEN_RELEASE, (_e, arg: { url: string }) => {
+    void shell.openExternal(arg.url);
+  });
+
   const win = createWindow();
 
   win.once('ready-to-show', () => {
     win.show();
     const startupMs = Math.round(performance.now() - t0);
     console.log(`[varys] startup_ms=${startupMs}`);
+
+    void checkForUpdate(app.getVersion()).then((info) => {
+      if (info.available) {
+        pushToRenderer(IPC_CHANNELS.UPDATER_UPDATE_AVAILABLE, info);
+      }
+    });
   });
 }).catch((err) => {
   console.error('[varys] Failed to start', err);
