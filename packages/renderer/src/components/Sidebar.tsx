@@ -1,6 +1,7 @@
-import { Cpu, Eye, Gear, Lightning, Stack, TerminalWindow } from '@phosphor-icons/react';
+import { Cpu, Gear, Lightning, Stack, TerminalWindow } from '@phosphor-icons/react';
 import { NavLink } from 'react-router-dom';
 
+import { VarysLogo } from '@/components/VarysLogo';
 import { useQueueStats } from '@/hooks/useQueueStats';
 import { useEventsStore } from '@/store/useEventsStore';
 
@@ -66,18 +67,8 @@ export function Sidebar() {
       aria-label="Navigation principale"
     >
       {/* Logo */}
-      <div className="mb-6 flex items-center gap-2 px-3">
-        <Eye size={20} weight="fill" style={{ color: 'var(--hd-violet-500)' }} />
-        <span
-          className="text-base font-bold"
-          style={{
-            background: 'linear-gradient(90deg, var(--hd-violet-500), var(--hd-emerald-400))',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          Varys
-        </span>
+      <div className="mb-6 px-3">
+        <VarysLogo size={24} withName />
       </div>
 
       {/* Nav items */}
