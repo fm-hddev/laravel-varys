@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Entries are managed automatically by [Changesets](https://github.com/changesets/changesets).
 
+## [1.0.3] — 2026-04-20
+
+### Fixed
+
+- **CI build failure** — top-level `await import()` in `renderer/src/main.tsx` rejected by esbuild (target `es2020`/`chrome87`). Wrapped in an async IIFE (`void main()`).
+
+---
+
 ## [1.0.1] — 2026-04-20
 
 ### Fixed
