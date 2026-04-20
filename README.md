@@ -6,6 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Bundle < 200KB](https://img.shields.io/badge/bundle-%3C200KB-green)
 ![Node 20+](https://img.shields.io/badge/node-20%2B-blue)
+![macOS unsigned](https://img.shields.io/badge/macOS-unsigned%20%E2%80%94%20xattr%20-cr%20required-orange?logo=apple)
 
 **Varys** is a macOS desktop app that gives Laravel developers a real-time view of their local stack: processes, Reverb broadcast events, queues, and logs — in a single window, without modifying the Laravel app.
 
@@ -29,18 +30,42 @@
 
 ---
 
-## Install
+## Installation
 
-1. [Download **Varys.dmg**](https://github.com/fm-hddev/laravel-varys/releases/latest) from GitHub Releases
-2. Open the DMG and drag **Varys.app** to `/Applications`
-3. Launch Varys → select your Laravel project folder
+### macOS
 
-> **Gatekeeper note**: Varys is not code-signed yet.
-> - If macOS says the app is **"damaged"**, run in Terminal then open normally:
->   ```bash
->   xattr -cr /Applications/Varys.app
->   ```
-> - If macOS says **"unidentified developer"**, right-click → **Open** is enough.
+Download the latest `.dmg` from the [Releases](https://github.com/fm-hddev/laravel-varys/releases) page, open it and drag **Varys.app** to your Applications folder.
+
+> **⚠️ Gatekeeper warning — "cannot be opened because the developer cannot be verified"**
+>
+> Varys is not yet notarized with an Apple Developer certificate.
+> Run this once in Terminal after installation:
+>
+> ```bash
+> xattr -cr /Applications/Varys.app
+> ```
+>
+> This removes the quarantine flag Apple sets on downloaded binaries.
+> No system permissions are modified — you can verify with `xattr -l /Applications/Varys.app` (should return empty).
+
+Then launch Varys normally from your Applications folder or Spotlight.
+
+### Linux
+
+Download the `.deb` (Debian/Ubuntu) or `.AppImage` from the Releases page.
+
+```bash
+# .deb
+sudo dpkg -i varys_*.deb
+
+# AppImage
+chmod +x Varys-*.AppImage && ./Varys-*.AppImage
+```
+
+### Windows
+
+Download the `.exe` installer from the Releases page and run it.
+Windows SmartScreen may prompt — click **"More info → Run anyway"**.
 
 ---
 
