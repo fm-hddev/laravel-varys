@@ -5,6 +5,9 @@ import { resolve } from 'path';
 
 export default defineConfig({
   root: resolve(__dirname, '.'),
+  // Required for Electron: file:// protocol resolves '/' to filesystem root,
+  // so asset paths must be relative ('./assets/...') not absolute ('/assets/...').
+  base: './',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
