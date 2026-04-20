@@ -11,7 +11,10 @@ const config: ForgeConfig = {
   packagerConfig: {
     name: 'Varys',
     executableName: 'varys',
+    icon: './build/icon',
     appBundleId: 'com.fredmoras8.varys',
+    appCategoryType: 'public.app-category.developer-tools',
+    darwinDarkModeSupport: true,
     asar: {
       // Native modules that must be excluded from asar
       unpack: '{node_modules/better-sqlite3,node_modules/@mapbox/node-pre-gyp}/**',
