@@ -63,12 +63,16 @@ const config: ForgeConfig = {
   },
   plugins: [
     new VitePlugin({
-      // Only build main process — preload and renderer are handled in hooks
       build: [
         {
           entry: 'src/index.ts',
           config: 'vite.main.config.mts',
           target: 'main',
+        },
+        {
+          entry: 'src/preload.ts',
+          config: 'vite.preload.config.mts',
+          target: 'preload',
         },
       ],
       // Renderer dev server (used by electron-forge start only)
