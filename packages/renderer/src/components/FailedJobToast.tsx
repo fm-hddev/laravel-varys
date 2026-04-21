@@ -25,12 +25,18 @@ import { useFailedJobs, useRetryFailedJob } from '@/hooks/useQueueStats';
 export function useFailedJobToasts() {
   const { data: failedJobs } = useFailedJobs();
   const retryMutation = useRetryFailedJob();
-  const prevIdsRef = useRef<Set<string | number>>(new Set());
+  const prevIdsRef = useRef<Set<string | number> | null>(null);
 
   useEffect(() => {
     if (!failedJobs) return;
 
-    const newJobs = failedJobs.filter(job => !prevIdsRef.current.has(job.id));
+    // First load: record existing IDs silently, don't toast pre-existing failures.
+    if (prevIdsRef.current === null) {
+      prevIdsRef.current = new Set(failedJobs.map(j => j.id));
+      return;
+    }
+
+    const newJobs = failedJobs.filter(job => !prevIdsRef.current!.has(job.id));
 
     newJobs.forEach(job => {
       toast.custom(
