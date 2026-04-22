@@ -48,16 +48,16 @@ export const router = createMemoryRouter([
     ),
   },
   {
-    path: '/settings',
-    element: (
-      <Wrap>
-        <SettingsScreen />
-      </Wrap>
-    ),
-  },
-  {
     element: <MainLayout />,
     children: [
+      {
+        path: '/settings',
+        element: (
+          <Suspense fallback={<Loading />}>
+            <SettingsScreen />
+          </Suspense>
+        ),
+      },
       {
         path: '/processes',
         element: (
