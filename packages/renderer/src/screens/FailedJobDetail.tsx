@@ -40,7 +40,7 @@ export default function FailedJobDetail() {
   }
 
   const payload     = job.payload as Record<string, unknown>;
-  const displayName = String(payload?.['displayName'] ?? job.id);
+  const displayName = String(payload?.['displayName'] ?? payload?.['job'] ?? job.id);
   const maxTries    = payload?.['maxTries'] != null ? String(payload['maxTries']) : '?';
   const exceptionClass   = firstLine(job.exception).split(':')[0]?.trim() ?? '';
   const exceptionMessage = firstLine(job.exception).split(':').slice(1).join(':').trim();
@@ -50,9 +50,10 @@ export default function FailedJobDetail() {
     <main className="flex h-full flex-col overflow-hidden" style={{ background: 'var(--bg-base)' }}>
       {/* Header */}
       <div
-        className="flex flex-shrink-0 items-center gap-3 px-4 py-3"
-        style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-card)' }}
+        className="flex flex-shrink-0 items-center gap-2 px-4 py-3"
+        style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' }}
       >
+        {/* Breadcrumb */}
         <button
           type="button"
           onClick={() => { void navigate('/queues'); }}
@@ -60,12 +61,17 @@ export default function FailedJobDetail() {
           style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-3)', cursor: 'pointer' }}
         >
           <ArrowLeft size={13} />
-          Retour
+          Queues
         </button>
-        <div className="flex-1 min-w-0">
-          <div className="truncate text-sm font-bold" style={{ color: 'var(--text-1)' }}>{displayName}</div>
-          <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Failed Job Detail</div>
-        </div>
+        <span style={{ color: 'var(--border-alt)', fontSize: 14 }}>/</span>
+        <span
+          className="flex-1 min-w-0 truncate text-sm font-semibold"
+          style={{ color: 'var(--text-1)', fontFamily: 'var(--hd-font-mono)' }}
+        >
+          {displayName}
+        </span>
+
+        {/* Actions */}
         <button
           type="button"
           onClick={() => { retryJob.mutate(job.id); }}
@@ -107,10 +113,10 @@ export default function FailedJobDetail() {
         {/* Metadata row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
           {[
-            { label: 'Queue',    value: job.queue },
-            { label: 'Essais',   value: `${maxTries} / ${maxTries}` },
-            { label: 'Échoué le', value: new Date(job.failedAt).toLocaleString('fr-FR') },
-            { label: 'Statut',   value: 'Failed definitively' },
+            { label: 'Job ID',      value: String(job.id) },
+            { label: 'Queue',       value: job.queue },
+            { label: 'Tentatives',  value: `${maxTries} / ${maxTries}` },
+            { label: 'Échoué le',   value: new Date(job.failedAt).toLocaleString('fr-FR') },
           ].map(({ label, value }) => (
             <div
               key={label}
