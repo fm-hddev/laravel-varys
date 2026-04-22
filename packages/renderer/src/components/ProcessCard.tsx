@@ -80,7 +80,7 @@ export function ProcessCard({ process: proc }: Props) {
         >
           {proc.uptime !== undefined
             ? `Uptime · ${formatUptime(proc.uptime)}`
-            : proc.adapterSource}
+            : (proc.error ?? proc.adapterSource)}
         </span>
 
         <button
