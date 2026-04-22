@@ -31,7 +31,7 @@ const handlers: Record<string, (...args: unknown[]) => Promise<unknown>> = {
     Promise.resolve([
       { id: 'p1', name: 'nginx', type: 'docker', status: 'up', uptime: 3600, adapterSource: 'docker' },
       { id: 'p2', name: 'php-fpm', type: 'docker', status: 'up', uptime: 3600, adapterSource: 'docker' },
-      { id: 'p3', name: 'queue:work', type: 'artisan', status: 'down', adapterSource: 'artisan' },
+      { id: 'p3', name: 'queue:work', type: 'artisan', status: 'down', adapterSource: 'artisan', error: 'php not found' },
       { id: 'p4', name: 'vite', type: 'vite', status: 'up', uptime: 120, adapterSource: 'vite-process' },
     ]),
   'events:broadcast': () =>
