@@ -4,21 +4,21 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AdapterConfig } from '@/components/AdapterConfig';
-import { HealthReport } from '@/components/HealthReport';
 import { KnownProjectsList } from '@/components/KnownProjectsList';
 import { useTheme, type ThemeMode } from '@/components/ThemeProvider';
+import { ViewTabs } from '@/components/ViewTabs';
 import { useIpc } from '@/hooks/useIpc';
 import { useProjectStore } from '@/store/useProjectStore';
 
-// ─── Nav items ────────────────────────────────────────────────────────────────
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
 
 type SectionId = 'project' | 'connections' | 'adapters' | 'appearance';
 
-const NAV_ITEMS: { id: SectionId; label: string; icon: React.ElementType }[] = [
-  { id: 'project',     label: 'Projet',       icon: FolderOpen    },
-  { id: 'connections', label: 'Connexions',   icon: PlugsConnected },
-  { id: 'adapters',   label: 'Adapters',     icon: Gear          },
-  { id: 'appearance', label: 'Apparence',    icon: Sun           },
+const TABS = [
+  { id: 'project',     label: 'Projet',     icon: <FolderOpen size={16} />    },
+  { id: 'connections', label: 'Connexions', icon: <PlugsConnected size={16} /> },
+  { id: 'adapters',    label: 'Adapters',   icon: <Gear size={16} />          },
+  { id: 'appearance',  label: 'Apparence',  icon: <Sun size={16} />           },
 ];
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
@@ -94,49 +94,32 @@ export default function SettingsScreen() {
   ];
 
   return (
-    <div className="flex h-full" style={{ background: 'var(--bg-base)' }}>
-      {/* ── Sidebar nav ── */}
-      <aside
-        className="flex flex-shrink-0 flex-col py-6 px-3"
-        style={{ width: 200, background: 'var(--bg-surface)', borderRight: '1px solid var(--border)' }}
-        aria-label="Sections des paramètres"
+    <div className="flex h-full flex-col" style={{ background: 'var(--bg-base)' }}>
+      {/* ── Page header ── */}
+      <div
+        className="flex items-center justify-between gap-3 px-6 py-3 shrink-0"
+        style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border)' }}
       >
-        <p className="px-3 mb-3 text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-          Paramètres
-        </p>
-        <nav className="flex flex-col gap-0.5">
-          {NAV_ITEMS.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => setActiveSection(id)}
-              className="flex items-center gap-2.5 w-full rounded-lg px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-              style={
-                activeSection === id
-                  ? { background: 'var(--hd-violet-600, #6d28d9)20', color: 'var(--text-1)', border: '1px solid var(--border-alt, var(--border))' }
-                  : { background: 'transparent', color: 'var(--text-muted)', border: '1px solid transparent' }
-              }
-            >
-              <Icon size={16} />
-              {label}
-            </button>
-          ))}
-        </nav>
+        <h1 className="text-base font-bold" style={{ color: 'var(--text-1)' }}>Paramètres</h1>
+        <button
+          type="button"
+          onClick={() => { void navigate(-1); }}
+          className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+          style={{ color: 'var(--text-3)' }}
+        >
+          ← Retour
+        </button>
+      </div>
 
-        <div className="mt-auto pt-4" style={{ borderTop: '1px solid var(--border)' }}>
-          <button
-            type="button"
-            onClick={() => { void navigate(-1); }}
-            className="flex items-center gap-2 px-3 py-2 text-sm w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-            style={{ color: 'var(--text-3)' }}
-          >
-            ← Retour
-          </button>
-        </div>
-      </aside>
+      {/* ── Tab bar ── */}
+      <ViewTabs
+        tabs={TABS}
+        activeTab={activeSection}
+        onTabChange={(id) => setActiveSection(id as SectionId)}
+      />
 
       {/* ── Content ── */}
-      <main className="flex-1 overflow-y-auto px-8 py-8">
+      <div className="flex-1 overflow-y-auto px-7 py-6" style={{ maxWidth: 640 }}>
         {activeSection === 'project' && (
           <ProjectSection
             activePath={activePath}
@@ -163,7 +146,7 @@ export default function SettingsScreen() {
             onSetMode={setMode}
           />
         )}
-      </main>
+      </div>
     </div>
   );
 }
@@ -185,29 +168,13 @@ function ProjectSection({
 }) {
   return (
     <>
-      <SectionHeader title="Projet actif" />
-      <div
-        className="flex items-center justify-between gap-3 rounded-lg px-3 py-2 mb-6"
-        style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)' }}
-      >
-        <p className="truncate text-sm" style={{ color: 'var(--text-1)' }} title={activePath ?? undefined}>
-          {activePath ?? <span style={{ color: 'var(--text-muted)' }}>Aucun projet sélectionné</span>}
-        </p>
-        <button
-          type="button"
-          onClick={onNavigate}
-          className="shrink-0 rounded px-2 py-1 text-xs font-medium text-indigo-400 hover:bg-indigo-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-        >
-          Changer
-        </button>
-      </div>
-
       <SectionHeader title="Projets connus" />
       <KnownProjectsList
         paths={knownPaths}
         activePath={activePath}
         onSwitch={(path) => { void onSwitch(path); }}
         onRemove={(path) => { void onRemove(path); }}
+        onNavigate={onNavigate}
       />
     </>
   );
@@ -228,55 +195,53 @@ function ConnectionsSection({
   onOverrideChange: (field: keyof Overrides, raw: string) => void;
 }) {
   if (!envDefaults) {
+    return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Chargement…</p>;
+  }
+
+  function Field({ field, label, placeholder }: { field: keyof Overrides; label: string; placeholder: string }) {
+    const val = overrides[field];
+    const display = val !== undefined ? String(val) : '';
+    const isModified = val !== undefined;
     return (
-      <>
-        <SectionHeader title="Connexions" />
-        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Chargement…</p>
-      </>
+      <div className="flex items-center gap-3 px-3 py-2" style={{ borderBottom: '1px solid var(--border)' }}>
+        <label className="w-24 shrink-0 text-xs" style={{ color: 'var(--text-3)' }}>{label}</label>
+        <input
+          type="text"
+          value={display}
+          placeholder={placeholder}
+          onChange={(e) => onOverrideChange(field, e.target.value)}
+          className="flex-1 bg-transparent text-sm focus:outline-none"
+          style={{ color: 'var(--text-1)' }}
+        />
+        {isModified && (
+          <span className="shrink-0 text-xs" style={{ color: 'var(--hd-violet-400)' }}>modifié</span>
+        )}
+      </div>
     );
   }
 
-  const fields: { field: keyof Overrides; label: string; placeholder: string }[] = [
-    { field: 'dbHost',    label: 'DB Host',    placeholder: envDefaults.dbHost },
-    { field: 'dbPort',    label: 'DB Port',    placeholder: String(envDefaults.dbPort) },
-    { field: 'redisHost', label: 'Redis Host', placeholder: envDefaults.redisHost },
-    { field: 'redisPort', label: 'Redis Port', placeholder: String(envDefaults.redisPort) },
-    { field: 'reverbHost', label: 'Reverb Host', placeholder: envDefaults.reverbHost },
-    { field: 'reverbPort', label: 'Reverb Port', placeholder: String(envDefaults.reverbPort) },
-    { field: 'appUrl',    label: 'App URL',    placeholder: envDefaults.appUrl },
-  ];
-
   return (
     <>
-      <SectionHeader title="Connexions" />
-      <div className="rounded-lg" style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
-        {fields.map(({ field, label, placeholder }, idx) => {
-          const val = overrides[field];
-          const display = val !== undefined ? String(val) : '';
-          const isModified = val !== undefined;
-          return (
-            <div
-              key={field}
-              className="flex items-center gap-3 px-3 py-2"
-              style={idx > 0 ? { borderTop: '1px solid var(--border)' } : undefined}
-            >
-              <label className="w-24 shrink-0 text-xs" style={{ color: 'var(--text-3)' }}>{label}</label>
-              <input
-                type="text"
-                value={display}
-                placeholder={placeholder}
-                onChange={(e) => onOverrideChange(field, e.target.value)}
-                className="flex-1 bg-transparent text-sm focus:outline-none"
-                style={{ color: 'var(--text-1)' }}
-              />
-              {isModified && (
-                <span className="shrink-0 text-xs" style={{ color: 'var(--hd-violet-400)' }}>modifié</span>
-              )}
-            </div>
-          );
-        })}
+      <SectionHeader title="Base de données" />
+      <div className="rounded-lg mb-5" style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)', overflow: 'hidden' }}>
+        <Field field="dbHost" label="DB Host" placeholder={envDefaults.dbHost} />
+        <Field field="dbPort" label="DB Port" placeholder={String(envDefaults.dbPort)} />
       </div>
-      <p className="mt-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+
+      <SectionHeader title="Redis" />
+      <div className="rounded-lg mb-5" style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)', overflow: 'hidden' }}>
+        <Field field="redisHost" label="Redis Host" placeholder={envDefaults.redisHost} />
+        <Field field="redisPort" label="Redis Port" placeholder={String(envDefaults.redisPort)} />
+      </div>
+
+      <SectionHeader title="Reverb" />
+      <div className="rounded-lg mb-3" style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)', overflow: 'hidden' }}>
+        <Field field="reverbHost" label="Reverb Host" placeholder={envDefaults.reverbHost} />
+        <Field field="reverbPort" label="Reverb Port" placeholder={String(envDefaults.reverbPort)} />
+        <Field field="appUrl" label="App URL" placeholder={envDefaults.appUrl} />
+      </div>
+
+      <p className="text-xs italic" style={{ color: 'var(--text-muted)' }}>
         Laisser vide pour utiliser la valeur du .env
       </p>
     </>
@@ -308,8 +273,6 @@ function AdaptersSection({
         report={report}
         onToggle={(id, enabled) => { void onToggle(id, enabled); }}
       />
-      <SectionHeader title="État des adapters" className="mt-8" />
-      <HealthReport report={report} />
     </>
   );
 }
