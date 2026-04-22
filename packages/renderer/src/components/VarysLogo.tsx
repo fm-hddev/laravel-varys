@@ -29,13 +29,20 @@ export function VarysLogo({
 
       {withName && (
         <span
-          className={cn(
-            'font-semibold tracking-tight',
-            variant === 'default' ? 'text-foreground' :
-            variant === 'muted'   ? 'text-muted-foreground' :
-            'text-white',
-          )}
-          style={{ fontSize: size * 0.6 }}
+          className="font-semibold tracking-tight select-none"
+          style={{
+            fontSize: size * 0.6,
+            ...(variant === 'default'
+              ? {
+                  background: 'linear-gradient(135deg, var(--hd-violet-500) 0%, var(--hd-emerald-400) 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }
+              : {
+                  color: variant === 'muted' ? 'var(--text-muted)' : '#fff',
+                }),
+          }}
         >
           Varys
         </span>

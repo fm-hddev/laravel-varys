@@ -36,9 +36,17 @@ function NavItem({
         [
           'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2',
           isActive
-            ? 'border border-[var(--border-alt)] bg-[var(--hd-violet-600)]/10 text-[var(--text-3)]'
-            : 'text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-2)]',
+            ? 'border text-[var(--text-3)]'
+            : 'border border-transparent text-[var(--text-muted)] hover:bg-[var(--bg-card)] hover:text-[var(--text-2)]',
         ].join(' ')
+      }
+      style={({ isActive }) =>
+        isActive
+          ? {
+              background: 'linear-gradient(135deg, rgba(109,40,217,0.18) 0%, rgba(16,185,129,0.08) 100%)',
+              borderColor: 'rgba(109,40,217,0.3)',
+            }
+          : {}
       }
     >
       {icon}
@@ -73,6 +81,17 @@ export function Sidebar() {
 
       {/* Nav items */}
       <nav className="flex flex-col gap-1">
+        <p style={{
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase' as const,
+          color: 'var(--text-muted)',
+          padding: '4px 12px 4px',
+          marginBottom: 2,
+        }}>
+          Navigation
+        </p>
         <NavItem to="/processes" icon={<Cpu size={16} />} label="Processus" />
         <NavItem to="/events" icon={<Lightning size={16} />} label="Événements" badge={eventsBadge} />
         <NavItem to="/queues" icon={<Stack size={16} />} label="Queues" badge={totalFailed} />
