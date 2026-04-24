@@ -11,6 +11,9 @@ export function createWindow(): BrowserWindow {
     width: 1280,
     height: 800,
     show: false,
+    titleBarStyle: 'hiddenInset',
+    trafficLightPosition: { x: 16, y: 16 },
+    icon: path.join(__dirname, '../../build/icon.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

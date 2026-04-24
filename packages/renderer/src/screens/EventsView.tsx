@@ -66,6 +66,62 @@ export default function EventsView() {
 
   return (
     <main className="flex h-full flex-col overflow-hidden" style={{ background: 'var(--bg-base)' }}>
+      {/* Header — toujours visible, hors tab */}
+      <div
+        className="flex items-center justify-between px-6 py-4 flex-shrink-0"
+        style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' }}
+      >
+        <div className="flex items-center gap-2">
+          <h1 className="text-base font-semibold" style={{ color: 'var(--text-1)' }}>
+            Événements
+          </h1>
+          {paused && pending.length > 0 && (
+            <span
+              className="rounded-full px-2 py-0.5 text-xs font-bold"
+              style={{ background: 'var(--hd-amber-500, #F59E0B)', color: '#000' }}
+            >
+              +{pending.length} en attente
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span
+              className="inline-block h-2 w-2 rounded-full"
+              style={{
+                background: paused ? 'var(--hd-amber-500, #F59E0B)' : 'var(--hd-green-500, #22C55E)',
+                boxShadow: paused ? 'none' : '0 0 6px var(--hd-green-500, #22C55E)',
+              }}
+            />
+            <span className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
+              {paused ? 'EN PAUSE' : 'LIVE'}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={handlePauseResume}
+            aria-label={paused ? 'Reprendre la réception des événements' : 'Mettre en pause la réception'}
+            className="rounded px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+            style={{
+              background: paused ? 'var(--hd-amber-500, #F59E0B)' : 'var(--bg-card)',
+              color: paused ? '#000' : 'var(--text-1)',
+              border: '1px solid var(--border)',
+            }}
+          >
+            {paused ? 'Reprendre' : 'Pause'}
+          </button>
+          <button
+            type="button"
+            onClick={handleClearAll}
+            aria-label="Vider la liste des événements"
+            className="rounded px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+            style={{ background: 'var(--bg-card)', color: 'var(--text-1)', border: '1px solid var(--border)' }}
+          >
+            Vider
+          </button>
+        </div>
+      </div>
+
       <ViewTabs
         tabs={tabs}
         activeTab={activeTab}
@@ -74,62 +130,6 @@ export default function EventsView() {
 
       {activeTab === 'events' && (
         <div className="flex flex-1 flex-col overflow-hidden">
-          {/* Header */}
-          <div
-            className="flex items-center justify-between px-6 py-4 flex-shrink-0"
-            style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' }}
-          >
-            <div className="flex items-center gap-2">
-              <h1 className="text-base font-semibold" style={{ color: 'var(--text-1)' }}>
-                Événements
-              </h1>
-              {paused && pending.length > 0 && (
-                <span
-                  className="rounded-full px-2 py-0.5 text-xs font-bold"
-                  style={{ background: 'var(--hd-amber-500, #F59E0B)', color: '#000' }}
-                >
-                  +{pending.length} en attente
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5">
-                <span
-                  className="inline-block h-2 w-2 rounded-full"
-                  style={{
-                    background: paused ? 'var(--hd-amber-500, #F59E0B)' : 'var(--hd-green-500, #22C55E)',
-                    boxShadow: paused ? 'none' : '0 0 6px var(--hd-green-500, #22C55E)',
-                  }}
-                />
-                <span className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
-                  {paused ? 'EN PAUSE' : 'LIVE'}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={handlePauseResume}
-                aria-label={paused ? 'Reprendre la réception des événements' : 'Mettre en pause la réception'}
-                className="rounded px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-                style={{
-                  background: paused ? 'var(--hd-amber-500, #F59E0B)' : 'var(--bg-card)',
-                  color: paused ? '#000' : 'var(--text-1)',
-                  border: '1px solid var(--border)',
-                }}
-              >
-                {paused ? 'Reprendre' : 'Pause'}
-              </button>
-              <button
-                type="button"
-                onClick={handleClearAll}
-                aria-label="Vider la liste des événements"
-                className="rounded px-3 py-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-                style={{ background: 'var(--bg-card)', color: 'var(--text-1)', border: '1px solid var(--border)' }}
-              >
-                Vider
-              </button>
-            </div>
-          </div>
-
           {/* Filters */}
           <div
             className="flex items-center gap-3 px-6 py-3 flex-shrink-0"

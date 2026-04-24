@@ -1,3 +1,4 @@
+import { ArrowRight } from '@phosphor-icons/react';
 import type { HealthReport as HealthReportType, KnownPath } from '@varys/core';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -79,7 +80,13 @@ export default function WelcomeScreen() {
     void navigate('/processes');
   }
 
-  const header = (
+  const headerTitle = (
+    <header className="mb-8 text-center">
+      <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--text-1)' }}>Varys</h1>
+    </header>
+  );
+
+  const headerEmpty = (
     <header className="mb-8 text-center">
       <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--text-1)' }}>Varys</h1>
       <p className="mt-2 text-sm italic" style={{ color: 'var(--text-3)' }}>
@@ -101,7 +108,11 @@ export default function WelcomeScreen() {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12" style={{ background: 'var(--bg-base)' }}>
         <div className="w-full max-w-md">
-          {header}
+          {headerTitle}
+
+          <p className="mb-2 text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+            Projets récents
+          </p>
 
           <div className="rounded-xl overflow-hidden mb-4" style={{ border: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
             {knownPaths.map((kp: KnownPath, idx) => {
@@ -134,9 +145,10 @@ export default function WelcomeScreen() {
                     type="button"
                     disabled={step === 'validating'}
                     onClick={() => { void handleOpenKnown(kp.projectPath); }}
-                    className="shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="shrink-0 flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:cursor-not-allowed disabled:opacity-50"
                     style={{ background: isActive ? 'var(--hd-violet-600)' : 'var(--bg-card)', color: isActive ? '#fff' : 'var(--text-2)', border: isActive ? 'none' : '1px solid var(--border)' }}
                   >
+                    <ArrowRight size={13} />
                     {step === 'validating' ? '…' : 'Ouvrir'}
                   </button>
                 </div>
@@ -184,7 +196,7 @@ export default function WelcomeScreen() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12" style={{ background: 'var(--bg-base)' }}>
       <div className="w-full max-w-md">
-        {header}
+        {headerEmpty}
 
         <section className="flex flex-col gap-6">
           <button

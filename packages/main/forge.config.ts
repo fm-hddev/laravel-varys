@@ -11,7 +11,10 @@ const config: ForgeConfig = {
   packagerConfig: {
     name: 'Varys',
     executableName: 'varys',
+    icon: './build/icon',
     appBundleId: 'com.fredmoras8.varys',
+    appCategoryType: 'public.app-category.developer-tools',
+    darwinDarkModeSupport: true,
     asar: {
       // Native modules that must be excluded from asar
       unpack: '{node_modules/better-sqlite3,node_modules/@mapbox/node-pre-gyp}/**',
@@ -60,12 +63,16 @@ const config: ForgeConfig = {
   },
   plugins: [
     new VitePlugin({
-      // Only build main process — preload and renderer are handled in hooks
       build: [
         {
           entry: 'src/index.ts',
           config: 'vite.main.config.mts',
           target: 'main',
+        },
+        {
+          entry: 'src/preload.ts',
+          config: 'vite.preload.config.mts',
+          target: 'preload',
         },
       ],
       // Renderer dev server (used by electron-forge start only)

@@ -11,6 +11,7 @@ export interface Process {
   uptime?: number; // seconds
   containerId?: string;
   adapterSource: string;
+  error?: string; // raison d'échec pour les processus status === 'down'
 }
 
 export interface LogLine {
