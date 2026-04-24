@@ -7,7 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Entries are managed automatically by [Changesets](https://github.com/changesets/changesets).
 
-## [1.0.0-rc.1] — 2026-04-17
+## [1.0.3] — 2026-04-20
+
+### Fixed
+
+- **CI build failure** — top-level `await import()` in `renderer/src/main.tsx` rejected by esbuild (target `es2020`/`chrome87`). Wrapped in an async IIFE (`void main()`).
+
+---
+
+## [1.0.1] — 2026-04-20
+
+### Fixed
+
+- **Crash on launch** — `fsevents.node` was resolved to an absolute CI runner path at build time and baked into the bundle, causing "Cannot find module" on any other machine. `fsevents` is now stubbed (chokidar falls back to its pure-JS polling watcher).
+
+---
+
+## [1.0.0] — 2026-04-19
+
+### Added
+
+- **Reverb WebSocket streaming** — broadcasts streamed via WebSocket + Laravel log channel discovery
+- **Screenshots** — 5 PNG screenshots in `assets/screenshots/` (processes, events, queues, failed jobs, logs)
+- **README** — screenshots displayed, install instructions, getting-started guide, badges
+
+### Changed
+
+- All packages bumped to `1.0.0`
+- `main` promoted as default branch (replaces `chore/bootstrap-monorepo`)
+
+### Fixed
+
+- CI pipeline: build order (core → adapters → lint) to resolve type-aware ESLint errors
+- IPC channel count updated to 19 after adding overrides channels
+- `@varys/*` types resolved from source for local lint/CI alignment
+
+---
+
+## [1.0.0-rc.1] — 2026-04-19
 
 ### Added
 

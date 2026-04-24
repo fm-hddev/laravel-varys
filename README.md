@@ -6,14 +6,16 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Bundle < 200KB](https://img.shields.io/badge/bundle-%3C200KB-green)
 ![Node 20+](https://img.shields.io/badge/node-20%2B-blue)
+![macOS unsigned](https://img.shields.io/badge/macOS-unsigned%20%E2%80%94%20xattr%20-cr%20required-orange?logo=apple)
 
 **Varys** is a macOS desktop app that gives Laravel developers a real-time view of their local stack: processes, Reverb broadcast events, queues, and logs — in a single window, without modifying the Laravel app.
 
 <!-- GIF demo coming soon -->
-<!-- assets/screenshots/processes.png -->
-<!-- assets/screenshots/events.png -->
-<!-- assets/screenshots/queues.png -->
-<!-- assets/screenshots/logs.png -->
+![Processes](assets/screenshots/processes.png)
+![Events](assets/screenshots/events.png)
+![Queues](assets/screenshots/queues.png)
+![Failed Job](assets/screenshots/failed_job.png)
+![Logs](assets/screenshots/logs.png)
 
 ---
 
@@ -28,13 +30,42 @@
 
 ---
 
-## Install
+## Installation
 
-1. [Download **Varys.dmg**](https://github.com/fm-hddev/laravel-varys/releases/latest) from GitHub Releases
-2. Open the DMG and drag **Varys.app** to `/Applications`
-3. Launch Varys → select your Laravel project folder
+### macOS
 
-> **Gatekeeper note**: Varys is not code-signed yet. On first launch, right-click → **Open** to bypass the unsigned app warning.
+Download the latest `.dmg` from the [Releases](https://github.com/fm-hddev/laravel-varys/releases) page, open it and drag **Varys.app** to your Applications folder.
+
+> **⚠️ Gatekeeper warning — "cannot be opened because the developer cannot be verified"**
+>
+> Varys is not yet notarized with an Apple Developer certificate.
+> Run this once in Terminal after installation:
+>
+> ```bash
+> xattr -cr /Applications/Varys.app
+> ```
+>
+> This removes the quarantine flag Apple sets on downloaded binaries.
+> No system permissions are modified — you can verify with `xattr -l /Applications/Varys.app` (should return empty).
+
+Then launch Varys normally from your Applications folder or Spotlight.
+
+### Linux
+
+Download the `.deb` (Debian/Ubuntu) or `.AppImage` from the Releases page.
+
+```bash
+# .deb
+sudo dpkg -i varys_*.deb
+
+# AppImage
+chmod +x Varys-*.AppImage && ./Varys-*.AppImage
+```
+
+### Windows
+
+Download the `.exe` installer from the Releases page and run it.
+Windows SmartScreen may prompt — click **"More info → Run anyway"**.
 
 ---
 
@@ -58,16 +89,6 @@
 
 ---
 
-## Optional: `varys/laravel-agent`
-
-```bash
-composer require varys/laravel-agent --dev
-```
-
-Unlocks enriched features: job retry from the UI, routes snapshot, detailed healthcheck endpoint.
-
----
-
 ## Architecture
 
 ```
@@ -84,7 +105,7 @@ adapters/
   log-file/         — log file tailing (chokidar)
   laravel-queue/    — queue stats (MySQL/PG/SQLite/Redis)
   reverb-redis/     — Reverb broadcast capture via Redis SUBSCRIBE
-  varys-agent/      — optional HTTP agent for enriched data
+  varys-agent/      — HTTP adapter for future enriched data (not yet published)
 ```
 
 Each data source is behind a `DataSourceAdapter` interface — fully independent, testable, and opt-in.

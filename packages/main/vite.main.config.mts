@@ -37,12 +37,15 @@ export default defineConfig({
       name: 'stub-optional-ws-native-deps',
       enforce: 'pre',
       resolveId(id) {
-        if (id === 'bufferutil' || id === 'utf-8-validate') {
+        if (id === 'bufferutil' || id === 'utf-8-validate' || id === 'fsevents') {
           return '\0stub:' + id;
         }
       },
       load(id) {
         if (id.startsWith('\0stub:')) {
+          // fsevents is called as a function by chokidar — return null so it
+          // falls back to its pure-JS polling watcher instead of crashing.
+          if (id === '\0stub:fsevents') return 'module.exports = null;';
           return 'module.exports = {};';
         }
       },

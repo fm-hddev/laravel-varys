@@ -1,3 +1,4 @@
+import { TerminalWindow } from '@phosphor-icons/react';
 import type { Process } from '@varys/core';
 import { useState } from 'react';
 
@@ -8,23 +9,10 @@ interface Props {
   process: Process;
 }
 
-const TYPE_BADGE: Record<Process['type'], string> = {
-  docker: 'bg-blue-900 text-blue-300',
-  artisan: 'bg-purple-900 text-purple-300',
-  vite: 'bg-yellow-900 text-yellow-300',
-  unknown: 'bg-neutral-800 text-neutral-400',
-};
-
-const STATUS_COLOR: Record<Process['status'], string> = {
-  up: 'text-emerald-400',
-  unhealthy: 'text-yellow-400',
-  down: 'text-red-400',
-};
-
-const STATUS_LABEL: Record<Process['status'], string> = {
-  up: 'En ligne',
-  unhealthy: 'Dégradé',
-  down: 'Hors ligne',
+const STATUS_CONFIG: Record<Process['status'], { color: string; label: string; pulse: boolean }> = {
+  up:        { color: 'var(--hd-emerald-400)', label: 'En ligne',   pulse: true  },
+  unhealthy: { color: 'var(--hd-warning-500)', label: 'Dégradé',    pulse: false },
+  down:      { color: '#6B7280',               label: 'Hors ligne', pulse: false },
 };
 
 function formatUptime(seconds: number): string {
@@ -36,46 +24,84 @@ function formatUptime(seconds: number): string {
 export function ProcessCard({ process: proc }: Props) {
   const [logsOpen, setLogsOpen] = useState(false);
   const lines = useLogStream(proc.id, logsOpen);
+  const s = STATUS_CONFIG[proc.status];
 
   return (
     <article
-      className="rounded-xl border border-neutral-800 bg-neutral-900 p-4"
+      className="flex flex-col gap-2.5 rounded-xl p-4 transition-[border-color,box-shadow]"
+      style={{
+        background: 'var(--bg-card)',
+        border: `1px solid ${proc.status === 'down' ? 'rgba(239,68,68,0.2)' : 'var(--border)'}`,
+      }}
       aria-label={`Processus ${proc.name}`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-semibold text-neutral-100 text-sm">{proc.name}</h3>
-            <span
-              className={`rounded px-1.5 py-0.5 text-xs font-medium ${TYPE_BADGE[proc.type]}`}
-            >
-              {proc.type}
-            </span>
+      {/* Top row: name/adapter + status */}
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <div
+            className="text-sm font-bold"
+            style={{ fontFamily: 'var(--hd-font-mono)', color: 'var(--text-1)' }}
+          >
+            {proc.name}
           </div>
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-500">
-            <span className={`font-medium ${STATUS_COLOR[proc.status]}`}>
-              {STATUS_LABEL[proc.status]}
-            </span>
-            {proc.uptime !== undefined && (
-              <span>Uptime : {formatUptime(proc.uptime)}</span>
-            )}
-            {proc.pid !== undefined && <span>PID {proc.pid}</span>}
-            <span className="italic">{proc.adapterSource}</span>
+          <div className="mt-0.5 text-[10.5px]" style={{ color: 'var(--text-muted)' }}>
+            {proc.type}
           </div>
         </div>
+
+        {/* Status dot */}
+        <span
+          className="flex shrink-0 items-center gap-1.5 text-xs font-semibold"
+          style={{ color: s.color }}
+        >
+          <span
+            className={s.pulse ? 'status-dot-pulse' : ''}
+            style={{
+              display: 'inline-block',
+              width: 7,
+              height: 7,
+              borderRadius: '50%',
+              background: s.color,
+              flexShrink: 0,
+            }}
+          />
+          {s.label}
+        </span>
+      </div>
+
+      {/* Bottom row: uptime + Logs button */}
+      <div className="flex items-center justify-between">
+        <span
+          className="text-[11px]"
+          style={{
+            fontFamily: 'var(--hd-font-mono)',
+            color: proc.status === 'down' ? 'var(--hd-danger-500)' : 'var(--text-muted)',
+          }}
+        >
+          {proc.uptime !== undefined
+            ? `Uptime · ${formatUptime(proc.uptime)}`
+            : (proc.error ?? proc.adapterSource)}
+        </span>
+
         <button
           type="button"
           onClick={() => setLogsOpen((o) => !o)}
           aria-expanded={logsOpen}
           aria-label={`${logsOpen ? 'Fermer' : 'Ouvrir'} les logs de ${proc.name}`}
-          className="shrink-0 rounded px-2 py-1 text-xs font-medium text-neutral-400 hover:bg-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+          className="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--hd-violet-400)] hover:bg-[var(--bg-card-alt)] hover:border-[var(--border-alt)]"
+          style={{
+            color: 'var(--text-muted)',
+            background: 'transparent',
+            border: '1px solid var(--border)',
+          }}
         >
-          {logsOpen ? 'Fermer logs' : 'Logs'}
+          <TerminalWindow size={13} />
+          {logsOpen ? 'Fermer' : 'Logs'}
         </button>
       </div>
 
       {logsOpen && (
-        <div className="mt-3">
+        <div className="mt-1">
           <LogPanel lines={lines} />
         </div>
       )}

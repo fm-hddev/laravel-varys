@@ -13,11 +13,16 @@ export const IPC_CHANNELS = {
   EVENTS_RESET_STREAM: 'events:resetStream',
   QUEUES_STATS: 'queues:stats',
   QUEUES_FAILED: 'queues:failed',
+  QUEUES_RETRY_JOB: 'queues:retryJob',
+  QUEUES_FORGET_JOB: 'queues:forgetJob',
+  QUEUES_PURGE_ALL: 'queues:purgeAll',
   LOGS_LIST_FILES: 'logs:listFiles',
   STREAM_PROCESS_LOG: 'stream:processLog',
   STREAM_APP_LOG: 'stream:appLog',
   STREAM_SUBSCRIBE: 'stream:subscribe',
   STREAM_UNSUBSCRIBE: 'stream:unsubscribe',
+  UPDATER_UPDATE_AVAILABLE: 'updater:updateAvailable',
+  UPDATER_OPEN_RELEASE: 'updater:openRelease',
 } as const;
 
 export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];

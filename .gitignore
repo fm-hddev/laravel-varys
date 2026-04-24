@@ -6,6 +6,8 @@ node_modules/
 # Build outputs
 dist/
 build/
+!packages/main/build/
+packages/main/build/icons/
 *.tsbuildinfo
 out/
 
@@ -61,3 +63,6 @@ tmp/
 
 # Vite dev cache
 packages/renderer/.vite/
+
+# Screenshots raw (not committed — run scripts/crop-screenshots.sh to generate)
+screenshots/raw/

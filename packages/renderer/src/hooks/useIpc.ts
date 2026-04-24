@@ -17,6 +17,9 @@ export function useIpc() {
     resetStream: () => window.varys.invoke('events:resetStream'),
     getQueueStats: () => window.varys.invoke('queues:stats'),
     getFailedJobs: () => window.varys.invoke('queues:failed'),
+    retryFailedJob: (id: string | number) => window.varys.invoke('queues:retryJob', { id }),
+    forgetFailedJob: (id: string | number) => window.varys.invoke('queues:forgetJob', { id }),
+    purgeAllFailedJobs: () => window.varys.invoke('queues:purgeAll'),
     listLogFiles: () => window.varys.invoke('logs:listFiles'),
     subscribe: (payload: IpcPayloadMap['stream:subscribe']['request']) =>
       window.varys.invoke('stream:subscribe', payload),

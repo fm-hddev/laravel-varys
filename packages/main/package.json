@@ -1,6 +1,6 @@
 {
   "name": "@varys/main",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "type": "commonjs",
   "main": ".vite/build/index.js",
@@ -8,7 +8,7 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc",
     "dev": "electron-forge start",
-    "make": "electron-forge make",
+    "make": "npm run build --workspace=@varys/renderer && electron-forge make",
     "package": "electron-forge package",
     "test": "vitest run"
   },

@@ -8,6 +8,7 @@ export type {
   FailedJob,
   HealthReport,
   KnownPath,
+  UpdateInfo,
 } from './types/domain.js';
 
 export type { ProjectContext, ProjectOverrides } from './types/context.js';
