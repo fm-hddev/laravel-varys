@@ -59,7 +59,7 @@ export function useFailedJobToasts() {
     });
 
     prevIdsRef.current = new Set(failedJobs.map(j => j.id));
-  }, [failedJobs, retryMutation]);
+  }, [failedJobs]); // retryMutation intentionnellement exclu : utilisé seulement en closure, non lu dans l'effet
 }
 
 // ─── Toast UI ─────────────────────────────────────────────────────────────────
